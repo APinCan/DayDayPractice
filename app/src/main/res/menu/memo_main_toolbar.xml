@@ -3,10 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/insert_image"
+        android:id="@+id/action_insert_image"
         android:icon="@drawable/ic_insert_photo_black_18dp"
         android:title="insertImage"
         app:showAsAction="always"/>
 
+    <item
+        android:id="@+id/action_capture_image_convert"
+        android:icon="@drawable/ic_aspect_ratio_black_18dp"
+        android:title="captrueImageToText"
+        app:showAsAction="always"/>
 
 </menu>
