@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
@@ -33,6 +34,7 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
     private Context mContext;
     private TextView textTitle;
     private TextView textMain;
+    private Bitmap memoBitmap;
     private TextView textAddress;
     final int MEMO_EDIT = 100;
 
@@ -53,17 +55,12 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
 //        this.mContext=mContext;
 //    }
 
-
     public void setmContext(Context mContext) {
         this.mContext = mContext;
     }
 
     //recycler뷰의 핵심인 viewHolder, 여기서 subView를 세팅
     class ViewHolder extends RecyclerView.ViewHolder{
-//        private TextView textTitle;
-//        private TextView textMain;
-//        private TextView textAddress;
-
         //뷰홀더를 생성하면서 memos.xml에서 itemview들의 id를 가져옴
         ViewHolder(View itemView) {
             super(itemView);

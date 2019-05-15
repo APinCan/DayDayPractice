@@ -12,9 +12,10 @@ public class MemoData {
 
     public MemoData(){}
 
-    public MemoData(String title, String main, String address){
+    public MemoData(String title, String main, Bitmap memoBitmap, String address){
         this.textTitle=title;
         this.textMain=main;
+        this.memoBitmap=memoBitmap;
         this.textAddress=address;
     }
 
@@ -43,4 +44,6 @@ public class MemoData {
     }
 
     public void setMemoBitmap(Bitmap memoBitmap){ this.memoBitmap=memoBitmap;}
+
+
 }

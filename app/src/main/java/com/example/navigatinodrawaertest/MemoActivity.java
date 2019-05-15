@@ -6,9 +6,13 @@ import android.graphics.BitmapFactory;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.Spanned;
+import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,7 +30,7 @@ public class MemoActivity extends AppCompatActivity {
     TextView textViewAddress;
     MemoAdapter memoAdapter;
     Intent intent;
-    Bitmap inputImage;
+    Bitmap inputImage=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,8 @@ public class MemoActivity extends AppCompatActivity {
         editTextTitle.setText(intent.getStringExtra("memoTitle"));
         editTextMain.setText(intent.getStringExtra("memoMain"));
         textViewAddress.setText(intent.getStringExtra("memoAddress"));
+
+
     }
 
     @Override
@@ -71,9 +77,16 @@ public class MemoActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        MemoData memoData = new MemoData(editTextTitle.getText().toString(), editTextMain.getText().toString(), "address");
-        memoAdapter.addItem(memoData);
-        memoAdapter.notifyDataSetChanged();
+        String textTitle=editTextTitle.getText().toString();
+        String textMain=editTextMain.getText().toString();
+        if(!textTitle.equals("")){
+            if(!textMain.equals("")){
+
+                MemoData memoData = new MemoData(editTextTitle.getText().toString(), editTextMain.getText().toString(), inputImage, "address");
+                memoAdapter.addItem(memoData);
+                memoAdapter.notifyDataSetChanged();
+            }
+        }
 
         Log.d("ADAPTOR", "onBackPressed()");
         super.onBackPressed();
@@ -105,6 +118,8 @@ public class MemoActivity extends AppCompatActivity {
 
                     inputImage= BitmapFactory.decodeStream(in);
                     in.close();
+
+                    setPictureinMain(inputImage);
                 } catch (Exception e){
                     e.printStackTrace();
                 }
@@ -133,5 +148,12 @@ public class MemoActivity extends AppCompatActivity {
         Toast.makeText(this, "recognizing....", Toast.LENGTH_SHORT).show();
 
         editTextMain.setText(text);
+    }
+
+    public void setPictureinMain(Bitmap bitmap){
+        int cursor=editTextMain.getSelectionStart();
+
+        Spannable span = (Spannable)editTextMain.getText();
+        span.setSpan(new ImageSpan(bitmap), cursor, cursor+1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 }
