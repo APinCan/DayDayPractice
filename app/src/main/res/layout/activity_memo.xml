@@ -4,9 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="5dp"
-    android:background="@drawable/layout_border"
     android:orientation="vertical"
     android:paddingTop="10dp"
+    android:elevation="10dp"
+    android:background="#FFFFFF"
     tools:context=".MemoActivity">
 
     <EditText
@@ -16,7 +17,8 @@
         android:background="@android:color/transparent"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="" />
+        android:hint="제목"
+         />
 
     <EditText
         android:id="@+id/editTextMain"
@@ -24,6 +26,7 @@
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:ems="10"
+        android:hint="내용"
         android:inputType="textMultiLine"
         android:scrollbars="vertical"
         android:text="" />
