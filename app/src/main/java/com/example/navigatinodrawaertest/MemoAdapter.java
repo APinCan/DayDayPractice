@@ -125,6 +125,18 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
                 ((Activity) mContext).startActivityForResult(intent, MEMO_EDIT, options.toBundle());
             }
         });
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                removeItem(position);
+                notifyDataSetChanged();
+                //이메서드에서 이벤트에대한 처리가 끝나서 다른데서 처리할 필요 없으면 true
+                //여기서 이벤트 처리를 끝내지 못했을 경우 false
+                return true;
+            }
+        });
     }
 
     //recyclerview의 아이템의 총 개수
