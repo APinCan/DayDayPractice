@@ -1,11 +1,15 @@
 package com.example.navigatinodrawaertest;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +21,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,7 +30,10 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
 import java.io.InputStream;
+
+import static com.example.navigatinodrawaertest.ImgaeRotatorClass.handleSamplingAndRotationBitmap;
 
 public class MemoActivity extends AppCompatActivity {
     private final int PICK_FROM_ALBUM = 2000;
@@ -35,7 +44,10 @@ public class MemoActivity extends AppCompatActivity {
     TextView textViewAddress;
     MemoAdapter memoAdapter;
     Intent intent;
-    Bitmap inputImage=null;
+    Bitmap inputImage;
+    Dialog customDialog;
+    Button buttonOK, buttonCancel;
+    ImageView dialogImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,8 +132,8 @@ public class MemoActivity extends AppCompatActivity {
             if(resultCode==RESULT_OK){
                 try {
                     InputStream in = getContentResolver().openInputStream(data.getData());
-
                     inputImage= BitmapFactory.decodeStream(in);
+
                     in.close();
 
                     setPictureinMain(inputImage);
@@ -134,12 +146,14 @@ public class MemoActivity extends AppCompatActivity {
             if(resultCode==RESULT_OK){
                 try {
                     InputStream in  =getContentResolver().openInputStream(data.getData());
-
                     inputImage=BitmapFactory.decodeStream(in);
+
+                    Uri phtoUri=data.getData();
+                    inputImage=handleSamplingAndRotationBitmap(this, phtoUri);
+
                     in.close();
 
-                    showImageConvertDialog();
-                    //textRecognition();
+                    dialogImageConvert();
                 } catch (Exception e){
                     e.printStackTrace();
                 }
@@ -163,31 +177,34 @@ public class MemoActivity extends AppCompatActivity {
         span.setSpan(new ImageSpan(bitmap), cursor, cursor+1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
-    public void showImageConvertDialog(){
-        ImageView image = new ImageView(this);
-        image.setImageBitmap(inputImage);
+    public void dialogImageConvert(){
+        customDialog = new Dialog(this);
+        //customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        customDialog.setContentView(R.layout.image_convert_dialog);
+        customDialog.setTitle("ConvertImage");
 
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
 
-        builder.setTitle("ImageToText");
-        builder.setMessage("변환하시겠습니까?");
-        builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+        dialogImageView=(ImageView)customDialog.findViewById(R.id.dialogImage);
+        buttonOK=(Button)customDialog.findViewById(R.id.dialogOK);
+        buttonCancel=(Button)customDialog.findViewById(R.id.dialogCancel);
+        buttonOK.setEnabled(true);
+        buttonCancel.setEnabled(true);
+        dialogImageView.setImageBitmap(inputImage);
+
+        buttonOK.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Toast.makeText(getApplicationContext(), "변환시작", Toast.LENGTH_SHORT).show();
+            public void onClick(View v) {
                 textRecognition();
-                dialogInterface.dismiss();
+                customDialog.dismiss();
             }
         });
-        builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+        buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Toast.makeText(getApplicationContext(), "종료", Toast.LENGTH_SHORT).show();
-                dialogInterface.dismiss();
+            public void onClick(View v) {
+                customDialog.dismiss();
             }
-        }).setView(image);
-
-        AlertDialog alert=builder.create();
-        alert.show();
+        });
+        customDialog.show();
     }
+
 }

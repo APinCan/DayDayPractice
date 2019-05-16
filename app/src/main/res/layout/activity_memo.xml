@@ -14,16 +14,17 @@
         android:id="@+id/editTextTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:background="@android:color/transparent"
         android:ems="10"
-        android:inputType="textPersonName"
         android:hint="제목"
-         />
+        android:inputType="textPersonName" />
 
     <EditText
         android:id="@+id/editTextMain"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:background="@android:color/transparent"
         android:ems="10"
         android:hint="내용"
@@ -35,6 +36,7 @@
         android:id="@+id/textViewAddressActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:text="주소" />
 
 </LinearLayout>
