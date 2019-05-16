@@ -1,9 +1,13 @@
 package com.example.navigatinodrawaertest;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Spannable;
@@ -14,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -133,7 +138,8 @@ public class MemoActivity extends AppCompatActivity {
                     inputImage=BitmapFactory.decodeStream(in);
                     in.close();
 
-                    textRecognition();
+                    showImageConvertDialog();
+                    //textRecognition();
                 } catch (Exception e){
                     e.printStackTrace();
                 }
@@ -155,5 +161,33 @@ public class MemoActivity extends AppCompatActivity {
 
         Spannable span = (Spannable)editTextMain.getText();
         span.setSpan(new ImageSpan(bitmap), cursor, cursor+1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+    }
+
+    public void showImageConvertDialog(){
+        ImageView image = new ImageView(this);
+        image.setImageBitmap(inputImage);
+
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+
+        builder.setTitle("ImageToText");
+        builder.setMessage("변환하시겠습니까?");
+        builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Toast.makeText(getApplicationContext(), "변환시작", Toast.LENGTH_SHORT).show();
+                textRecognition();
+                dialogInterface.dismiss();
+            }
+        });
+        builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Toast.makeText(getApplicationContext(), "종료", Toast.LENGTH_SHORT).show();
+                dialogInterface.dismiss();
+            }
+        }).setView(image);
+
+        AlertDialog alert=builder.create();
+        alert.show();
     }
 }
