@@ -57,6 +57,7 @@ public class MemoActivity extends AppCompatActivity {
     Dialog customDialog;
     Button buttonOK, buttonCancel;
     ImageView dialogImageView;
+    ImageView meemoImageView;
     private GpsTracker gpsTracker;
 
     @Override
@@ -70,6 +71,7 @@ public class MemoActivity extends AppCompatActivity {
         editTextMain=(EditText) findViewById(R.id.editTextMain);
         textViewAddress=(TextView)findViewById(R.id.textViewAddressActivity);
         textViewCurrentDay=(TextView)findViewById(R.id.textViewCurrentDayActivity);
+        meemoImageView=(ImageView)findViewById(R.id.imageViewMemoActivity);
 
         editTextTitle.setTransitionName("transitionTitle");
         editTextMain.setTransitionName("transitionMain");
@@ -79,8 +81,10 @@ public class MemoActivity extends AppCompatActivity {
         editTextMain.setText(intent.getStringExtra("memoMain"));
         textViewAddress.setText(intent.getStringExtra("memoAddress"));
         textViewCurrentDay.setText(intent.getStringExtra("memoCurrentDay"));
-
-
+        byte[] byteImage=intent.getByteArrayExtra("memoImage");
+        if(byteImage!=null) {
+            meemoImageView.setImageBitmap(DataConverter.getImage(byteImage));
+        }
     }
 
     @Override
@@ -160,7 +164,13 @@ public class MemoActivity extends AppCompatActivity {
 
                     in.close();
 
-                    setPictureinMain(inputImage);
+                    //이건 editText에 그림을 넣는방법
+                    //setPictureinMain(inputImage);
+                    meemoImageView.setVisibility(View.VISIBLE);
+                    inputImage=DataConverter.bitmapResizer(inputImage);
+
+                    meemoImageView.setImageBitmap(inputImage);
+
                 } catch (Exception e){
                     e.printStackTrace();
                 }

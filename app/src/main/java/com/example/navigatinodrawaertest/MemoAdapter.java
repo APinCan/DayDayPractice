@@ -13,6 +13,7 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,9 +35,9 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
     private Context mContext;
     private TextView textTitle;
     private TextView textMain;
-    private Bitmap memoBitmap;
     private TextView textAddress;
     private TextView textCurrentDay;
+    private ImageView memoImageView;
     final int MEMO_EDIT = 100;
 
     private MemoAdapter(){
@@ -65,11 +66,11 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
         //뷰홀더를 생성하면서 memos.xml에서 itemview들의 id를 가져옴
         ViewHolder(View itemView) {
             super(itemView);
-
             textTitle=itemView.findViewById(R.id.textViewTitle);
             textMain=itemView.findViewById(R.id.textViewMain);
             textAddress=itemView.findViewById(R.id.textViewAddress);
             textCurrentDay=itemView.findViewById(R.id.textViewCurrentDay);
+            memoImageView=itemView.findViewById(R.id.imageViewMemos);
         }
 
         void onBind(MemoData memoData){
@@ -77,6 +78,7 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
             textMain.setText(memoData.getMain());
             textAddress.setText(memoData.getAddress());
             textCurrentDay.setText(memoData.getTextCurrentDay());
+            memoImageView.setImageBitmap(memoData.getMemoBitmap());
         }
     }
 
@@ -116,6 +118,9 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
                 intent.putExtra("memoMain", memos.get(position).getMain());
                 intent.putExtra("memoAddress", memos.get(position).getAddress());
                 intent.putExtra("memoCurrentDay", memos.get(position).getTextCurrentDay());
+
+                byte[] memoImage=DataConverter.getBytes(memos.get(position).getMemoBitmap());
+                intent.putExtra("memoImage", memoImage);
 
                 Log.d("ADAPTOR", "onBindViewHolder");
                 Log.d("ADAPTOR", memos.get(position).getTitle());
