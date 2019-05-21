@@ -1,22 +1,23 @@
 package com.example.navigatinodrawaertest;
 
 import android.graphics.Bitmap;
-import android.media.MediaMetadata;
 
 //Memo데이터를 저장할 객체 생성
 public class MemoData {
     private String textTitle;
     private String textMain;
     private String textAddress;
+    private String textCurrentDay;
     private Bitmap memoBitmap;
 
     public MemoData(){}
 
-    public MemoData(String title, String main, Bitmap memoBitmap, String address){
+    public MemoData(String title, String main, Bitmap memoBitmap, String address, String textCurrentDay){
         this.textTitle=title;
         this.textMain=main;
         this.memoBitmap=memoBitmap;
         this.textAddress=address;
+        this.textCurrentDay=textCurrentDay;
     }
 
     public String getTitle(){
@@ -30,6 +31,8 @@ public class MemoData {
     public String getAddress() { return textAddress; }
 
     public Bitmap getMemoBitmap() {return memoBitmap;}
+
+    public String getTextCurrentDay() {return textCurrentDay;}
 
     public void setTitle(String title){
         this.textTitle=title;
@@ -45,5 +48,5 @@ public class MemoData {
 
     public void setMemoBitmap(Bitmap memoBitmap){ this.memoBitmap=memoBitmap;}
 
-
+    public void setTextCurrentDay(String textCurrentDay) { this.textCurrentDay=textCurrentDay;}
 }

@@ -36,6 +36,7 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
     private TextView textMain;
     private Bitmap memoBitmap;
     private TextView textAddress;
+    private TextView textCurrentDay;
     final int MEMO_EDIT = 100;
 
     private MemoAdapter(){
@@ -68,12 +69,14 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
             textTitle=itemView.findViewById(R.id.textViewTitle);
             textMain=itemView.findViewById(R.id.textViewMain);
             textAddress=itemView.findViewById(R.id.textViewAddress);
+            textCurrentDay=itemView.findViewById(R.id.textViewCurrentDay);
         }
 
         void onBind(MemoData memoData){
             textTitle.setText(memoData.getTitle());
             textMain.setText(memoData.getMain());
             textAddress.setText(memoData.getAddress());
+            textCurrentDay.setText(memoData.getTextCurrentDay());
         }
     }
 
@@ -112,6 +115,7 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
                 intent.putExtra("memoTitle",  memos.get(position).getTitle());
                 intent.putExtra("memoMain", memos.get(position).getMain());
                 intent.putExtra("memoAddress", memos.get(position).getAddress());
+                intent.putExtra("memoCurrentDay", memos.get(position).getTextCurrentDay());
 
                 Log.d("ADAPTOR", "onBindViewHolder");
                 Log.d("ADAPTOR", memos.get(position).getTitle());

@@ -8,6 +8,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.support.annotation.Nullable;
@@ -32,22 +35,29 @@ import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 import static com.example.navigatinodrawaertest.ImgaeRotatorClass.handleSamplingAndRotationBitmap;
 
 public class MemoActivity extends AppCompatActivity {
     private final int PICK_FROM_ALBUM = 2000;
+    private static final int GPS_ENABLE_REQUEST_CODE = 2002;
     private final int PICK_FROM_ALBUM_TEXTRECOGNITION=2001;
 
     EditText editTextTitle;
     EditText editTextMain;
     TextView textViewAddress;
+    TextView textViewCurrentDay;
     MemoAdapter memoAdapter;
     Intent intent;
     Bitmap inputImage;
     Dialog customDialog;
     Button buttonOK, buttonCancel;
     ImageView dialogImageView;
+    private GpsTracker gpsTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +69,7 @@ public class MemoActivity extends AppCompatActivity {
         editTextTitle=(EditText) findViewById(R.id.editTextTitle);
         editTextMain=(EditText) findViewById(R.id.editTextMain);
         textViewAddress=(TextView)findViewById(R.id.textViewAddressActivity);
+        textViewCurrentDay=(TextView)findViewById(R.id.textViewCurrentDayActivity);
 
         editTextTitle.setTransitionName("transitionTitle");
         editTextMain.setTransitionName("transitionMain");
@@ -67,6 +78,7 @@ public class MemoActivity extends AppCompatActivity {
         editTextTitle.setText(intent.getStringExtra("memoTitle"));
         editTextMain.setText(intent.getStringExtra("memoMain"));
         textViewAddress.setText(intent.getStringExtra("memoAddress"));
+        textViewCurrentDay.setText(intent.getStringExtra("memoCurrentDay"));
 
 
     }
@@ -94,12 +106,24 @@ public class MemoActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        long now=System.currentTimeMillis();
+        Date date = new Date(now);
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        String currentDay=sdf.format(date);
+
+        gpsTracker = new GpsTracker(MemoActivity.this);
+
+        double latitude=gpsTracker.getLatitude();
+        double longitude=gpsTracker.getLongitude();
+
+        String address = getCurrentAddress(latitude, longitude);
+
         String textTitle=editTextTitle.getText().toString();
         String textMain=editTextMain.getText().toString();
         if(!textTitle.equals("")){
             if(!textMain.equals("")){
 
-                MemoData memoData = new MemoData(editTextTitle.getText().toString(), editTextMain.getText().toString(), inputImage, "address");
+                MemoData memoData = new MemoData(editTextTitle.getText().toString(), editTextMain.getText().toString(), inputImage, address, currentDay);
                 memoAdapter.addItem(memoData);
                 memoAdapter.notifyDataSetChanged();
             }
@@ -159,6 +183,19 @@ public class MemoActivity extends AppCompatActivity {
                 }
             }
         }
+        else if(requestCode==GPS_ENABLE_REQUEST_CODE){
+            //사용자가 GPS 활성 시켰는지 검사
+            if (checkLocationServicesStatus()) {
+                if (checkLocationServicesStatus()) {
+
+                    Log.d("@@@", "onActivityResult : GPS 활성화 되있음");
+                    //여기서는 일단 안쓰는 메서드
+//                    checkRunTimePermission();
+                    return;
+                }
+            }
+
+        }
     }
 
     public void textRecognition(){
@@ -207,4 +244,72 @@ public class MemoActivity extends AppCompatActivity {
         customDialog.show();
     }
 
+
+    //여기서부터 주소관련 코드들
+    public String getCurrentAddress( double latitude, double longitude) {
+        //지오코더... GPS를 주소로 변환
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+
+        List<Address> addresses;
+
+        try {
+            addresses = geocoder.getFromLocation(
+                    latitude,
+                    longitude,
+                    7);
+        } catch (IOException ioException) {
+            //네트워크 문제
+            Toast.makeText(this, "지오코더 서비스 사용불가", Toast.LENGTH_LONG).show();
+
+            return "지오코더 서비스 사용불가";
+        } catch (IllegalArgumentException illegalArgumentException) {
+            Toast.makeText(this, "잘못된 GPS 좌표", Toast.LENGTH_LONG).show();
+
+            return "잘못된 GPS 좌표";
+        }
+
+        if (addresses == null || addresses.size() == 0) {
+            Toast.makeText(this, "주소 미발견", Toast.LENGTH_LONG).show();
+
+            return "주소 미발견";
+        }
+        Address address = addresses.get(0);
+
+        return address.getAddressLine(0).toString()+"\n";
+    }
+
+
+    //여기부터는 GPS 활성화를 위한 메소드들
+    private void showDialogForLocationServiceSetting() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MemoActivity.this);
+        builder.setTitle("위치 서비스 비활성화");
+        builder.setMessage("앱을 사용하기 위해서는 위치 서비스가 필요합니다.\n"
+                + "위치 설정을 수정하실래요?");
+        builder.setCancelable(true);
+
+        builder.setPositiveButton("설정", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                Intent callGPSSettingIntent
+                        = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivityForResult(callGPSSettingIntent, GPS_ENABLE_REQUEST_CODE);
+            }
+        });
+
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+
+        builder.create().show();
+    }
+
+    public boolean checkLocationServicesStatus() {
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+                || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
 }
