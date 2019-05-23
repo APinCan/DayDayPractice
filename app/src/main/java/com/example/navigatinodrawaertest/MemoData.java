@@ -8,11 +8,12 @@ public class MemoData {
     private String textMain;
     private String textAddress;
     private String textCurrentDay;
-    private Bitmap memoBitmap;
+//    private Bitmap memoBitmap;
+    private byte[] memoBitmap;
 
     public MemoData(){}
 
-    public MemoData(String title, String main, Bitmap memoBitmap, String address, String textCurrentDay){
+    public MemoData(String title, String main, byte[] memoBitmap, String address, String textCurrentDay){
         this.textTitle=title;
         this.textMain=main;
         this.memoBitmap=memoBitmap;
@@ -30,7 +31,7 @@ public class MemoData {
 
     public String getAddress() { return textAddress; }
 
-    public Bitmap getMemoBitmap() {return memoBitmap;}
+    public byte[] getMemoBitmap() {return memoBitmap;}
 
     public String getTextCurrentDay() {return textCurrentDay;}
 
@@ -46,7 +47,7 @@ public class MemoData {
         this.textAddress=address;
     }
 
-    public void setMemoBitmap(Bitmap memoBitmap){ this.memoBitmap=memoBitmap;}
+    public void setMemoBitmap(byte[] memoBitmap){ this.memoBitmap=memoBitmap;}
 
     public void setTextCurrentDay(String textCurrentDay) { this.textCurrentDay=textCurrentDay;}
 }

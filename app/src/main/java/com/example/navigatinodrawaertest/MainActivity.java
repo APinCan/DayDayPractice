@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -23,6 +24,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.View;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -46,6 +48,9 @@ public class MainActivity extends AppCompatActivity
     final int MEMO_EDIT=100;
 
     private MemoAdapter memoAdapter;
+
+    DatabaseHelper databaseHelper;
+//    SQLiteDatabase database;
 
 
     @Override
@@ -76,6 +81,9 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
+        databaseHelper=new DatabaseHelper(MainActivity.this);
+        //데이터베이스는 데이터베이스헬퍼안에 생성성//        database=databaseHelper.getWritableDatabase();
+
         getLocation();
 
 //        memoAdapter= new MemoAdapter(MainActivity.this);
@@ -91,6 +99,13 @@ public class MainActivity extends AppCompatActivity
         recyclerView.setAdapter(memoAdapter);
 
         //어댑터뷰 더미데이터
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("onStartMainActivity", "MainActivity");
+//        databaseHelper.addEntry();
     }
 
     @Override

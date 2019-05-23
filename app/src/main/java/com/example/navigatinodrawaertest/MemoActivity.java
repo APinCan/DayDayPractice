@@ -3,6 +3,7 @@ package com.example.navigatinodrawaertest;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -46,6 +47,7 @@ public class MemoActivity extends AppCompatActivity {
     private final int PICK_FROM_ALBUM = 2000;
     private static final int GPS_ENABLE_REQUEST_CODE = 2002;
     private final int PICK_FROM_ALBUM_TEXTRECOGNITION=2001;
+    final int MEMO_EDIT = 100;
 
     EditText editTextTitle;
     EditText editTextMain;
@@ -58,7 +60,9 @@ public class MemoActivity extends AppCompatActivity {
     Button buttonOK, buttonCancel;
     ImageView dialogImageView;
     ImageView meemoImageView;
+    byte[] byteImage;
     private GpsTracker gpsTracker;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +77,7 @@ public class MemoActivity extends AppCompatActivity {
         textViewCurrentDay=(TextView)findViewById(R.id.textViewCurrentDayActivity);
         meemoImageView=(ImageView)findViewById(R.id.imageViewMemoActivity);
 
+
         editTextTitle.setTransitionName("transitionTitle");
         editTextMain.setTransitionName("transitionMain");
 
@@ -81,10 +86,21 @@ public class MemoActivity extends AppCompatActivity {
         editTextMain.setText(intent.getStringExtra("memoMain"));
         textViewAddress.setText(intent.getStringExtra("memoAddress"));
         textViewCurrentDay.setText(intent.getStringExtra("memoCurrentDay"));
-        byte[] byteImage=intent.getByteArrayExtra("memoImage");
+        byteImage=intent.getByteArrayExtra("memoImage");
+
         if(byteImage!=null) {
+            Log.d("byteImage", byteImage.length+"");
             meemoImageView.setImageBitmap(DataConverter.getImage(byteImage));
+            meemoImageView.setVisibility(View.VISIBLE);
         }
+
+        Log.d("onCreate", "onCreate");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("onStart", "start");
     }
 
     @Override
@@ -109,6 +125,20 @@ public class MemoActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+
+        Log.d("onStop", "onStop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        Log.d("onDestroy", "ondesty");
+    }
+
+    @Override
     public void onBackPressed() {
         long now=System.currentTimeMillis();
         Date date = new Date(now);
@@ -124,10 +154,19 @@ public class MemoActivity extends AppCompatActivity {
 
         String textTitle=editTextTitle.getText().toString();
         String textMain=editTextMain.getText().toString();
+        byte[] tmp;
+
+        if(inputImage==null){
+           tmp=byteImage;
+        }
+        else{
+            tmp=DataConverter.getBytes(inputImage);
+        }
+
         if(!textTitle.equals("")){
             if(!textMain.equals("")){
 
-                MemoData memoData = new MemoData(editTextTitle.getText().toString(), editTextMain.getText().toString(), inputImage, address, currentDay);
+                MemoData memoData = new MemoData(textTitle, textMain, tmp, address, currentDay);
                 memoAdapter.addItem(memoData);
                 memoAdapter.notifyDataSetChanged();
             }
@@ -204,7 +243,11 @@ public class MemoActivity extends AppCompatActivity {
                     return;
                 }
             }
+        }
+        else if(resultCode==MEMO_EDIT){
+            if(resultCode==RESULT_OK){
 
+            }
         }
     }
 

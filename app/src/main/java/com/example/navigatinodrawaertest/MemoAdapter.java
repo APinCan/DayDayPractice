@@ -65,6 +65,7 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
     class ViewHolder extends RecyclerView.ViewHolder{
         //뷰홀더를 생성하면서 memos.xml에서 itemview들의 id를 가져옴
         ViewHolder(View itemView) {
+            //여기도 건드릴꺼없음
             super(itemView);
             textTitle=itemView.findViewById(R.id.textViewTitle);
             textMain=itemView.findViewById(R.id.textViewMain);
@@ -73,16 +74,21 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
             memoImageView=itemView.findViewById(R.id.imageViewMemos);
         }
 
-        void onBind(MemoData memoData){
-            textTitle.setText(memoData.getTitle());
-            textMain.setText(memoData.getMain());
-            textAddress.setText(memoData.getAddress());
-            textCurrentDay.setText(memoData.getTextCurrentDay());
-            memoImageView.setImageBitmap(memoData.getMemoBitmap());
-        }
+//        void onBind(MemoData memoData){
+//            textTitle.setText(memoData.getTitle());
+//            textMain.setText(memoData.getMain());
+//            textAddress.setText(memoData.getAddress());
+//            textCurrentDay.setText(memoData.getTextCurrentDay());
+//            if(memoData.getMemoBitmap()!=null){
+//                memoImageView.setImageBitmap(DataConverter.getImage(memoData.getMemoBitmap()));
+//                memoImageView.setVisibility(View.VISIBLE);
+//            }
+//
+//        }
     }
 
     //아이템뷰를 위한 뷰홀더 객체를 생성하여 리턴
+    //건드릴게없음
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
@@ -106,7 +112,26 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
     //아이템을 하나하나 보여주는 능력
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-        holder.onBind(memos.get(position));
+//        holder.onBind(memos.get(position));
+//            textTitle.setText(memoData.getTitle());
+//            textMain.setText(memoData.getMain());
+//            textAddress.setText(memoData.getAddress());
+//            textCurrentDay.setText(memoData.getTextCurrentDay());
+//            if(memoData.getMemoBitmap()!=null){
+//                memoImageView.setImageBitmap(DataConverter.getImage(memoData.getMemoBitmap()));
+//                memoImageView.setVisibility(View.VISIBLE);
+//            }
+
+        MemoData item= memos.get(position);
+        textTitle.setText(item.getTitle());
+        textMain.setText(item.getMain());
+        textAddress.setText(item.getAddress());
+        textCurrentDay.setText(item.getTextCurrentDay());
+        if(item.getMemoBitmap()!=null){
+            memoImageView.setImageBitmap(DataConverter.getImage(item.getMemoBitmap()));
+            memoImageView.setVisibility(View.VISIBLE);
+        }
+
         //https://www.google.com/search?newwindow=1&ei=FqrWXLOeHe6zmAWTx4DgBg&q=%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C+%EA%B3%B5%EC%9C%A0+%EC%9A%94%EC%86%8C+%EC%A0%84%ED%99%98&oq=%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C+%EA%B3%B5%EC%9C%A0+%EC%9A%94%EC%86%8C+%EC%A0%84%ED%99%98&gs_l=psy-ab.3...104679.109631..109823...6.0..2.164.2148.0j19....2..0....1..gws-wiz.......35i39j0j33i21j33i160.SxUywIRe6ik
         //https://www.youtube.com/watch?v=sv6raw76BRI
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -119,8 +144,9 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
                 intent.putExtra("memoAddress", memos.get(position).getAddress());
                 intent.putExtra("memoCurrentDay", memos.get(position).getTextCurrentDay());
 
-                byte[] memoImage=DataConverter.getBytes(memos.get(position).getMemoBitmap());
-                intent.putExtra("memoImage", memoImage);
+//                byte[] memoImage=DataConverter.getBytes(memos.get(position).getMemoBitmap());
+//                intent.putExtra("memoImage", memoImage);
+                intent.putExtra("memoImage", memos.get(position).getMemoBitmap());
 
                 Log.d("ADAPTOR", "onBindViewHolder");
                 Log.d("ADAPTOR", memos.get(position).getTitle());
@@ -131,7 +157,8 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
                 ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)mContext, v, "memoTransition");
 
                 //mContext.startActivity(intent, options.toBundle());
-                ((Activity) mContext).startActivityForResult(intent, MEMO_EDIT, options.toBundle());
+//                ((Activity) mContext).startActivityForResult(intent, MEMO_EDIT, options.toBundle());
+                ((Activity) mContext).startActivityForResult(intent, MEMO_EDIT);
             }
         });
 
