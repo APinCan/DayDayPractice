@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 
 //Memo데이터를 저장할 객체 생성
 public class MemoData {
+    private int id;
     private String textTitle;
     private String textMain;
     private String textAddress;
@@ -21,6 +22,8 @@ public class MemoData {
         this.textCurrentDay=textCurrentDay;
     }
 
+    public int getId() { return id;}
+
     public String getTitle(){
         return textTitle;
     }
@@ -34,6 +37,8 @@ public class MemoData {
     public byte[] getMemoBitmap() {return memoBitmap;}
 
     public String getTextCurrentDay() {return textCurrentDay;}
+
+    public void setId(int id) {this.id=id;}
 
     public void setTitle(String title){
         this.textTitle=title;

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Address;
 import android.location.Geocoder;
@@ -49,7 +50,8 @@ public class MainActivity extends AppCompatActivity
 
     private MemoAdapter memoAdapter;
 
-    DatabaseHelper databaseHelper;
+//    DatabaseHelper databaseHelper;
+//    SQLiteDatabase db;
 //    SQLiteDatabase database;
 
 
@@ -71,7 +73,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         memoAdapter=MemoAdapter.getInstance();
-        memoAdapter.setmContext(MainActivity.this);
+        memoAdapter.setmContext(MainActivity.this); //여기서 디비까지 생성
+        memoAdapter.databaseHelper.startLoadData();
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -81,7 +84,12 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
-        databaseHelper=new DatabaseHelper(MainActivity.this);
+//        databaseHelper=new DatabaseHelper(MainActivity.this);
+//        try{
+//            db=databaseHelper.getWritableDatabase();
+//        } catch (SQLException ex){
+//            db=databaseHelper.getReadableDatabase();
+//        }
         //데이터베이스는 데이터베이스헬퍼안에 생성성//        database=databaseHelper.getWritableDatabase();
 
         getLocation();
@@ -116,6 +124,12 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
     }
 
     @Override

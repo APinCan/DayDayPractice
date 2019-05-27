@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -40,8 +42,10 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
     private ImageView memoImageView;
     final int MEMO_EDIT = 100;
 
-    private MemoAdapter(){
+    DatabaseHelper databaseHelper;
+    SQLiteDatabase db;
 
+    private MemoAdapter(){
     }
 
     private static class MemoAdapterHoler{
@@ -59,6 +63,14 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
 
     public void setmContext(Context mContext) {
         this.mContext = mContext;
+        databaseHelper=new DatabaseHelper(mContext);
+
+        try{
+            db=databaseHelper.getWritableDatabase();
+        } catch (SQLException ex){
+            db=databaseHelper.getReadableDatabase();
+        }
+        databaseHelper.setDb(db);
     }
 
     //recycler뷰의 핵심인 viewHolder, 여기서 subView를 세팅
@@ -100,10 +112,6 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
         View view = inflater.inflate(R.layout.memos, parent, false);
         MemoAdapter.ViewHolder vh = new MemoAdapter.ViewHolder(view);
 
-        Log.d("ADAPTOR", "onCreateViewHolder");
-        Log.d("ADAPTOR", memos.get(i).getTitle());
-        Log.d("ADAPTOR", memos.get(i).getMain());
-
         return vh;
         //return new ViewHolder(view);
     }
@@ -112,17 +120,9 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
     //아이템을 하나하나 보여주는 능력
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-//        holder.onBind(memos.get(position));
-//            textTitle.setText(memoData.getTitle());
-//            textMain.setText(memoData.getMain());
-//            textAddress.setText(memoData.getAddress());
-//            textCurrentDay.setText(memoData.getTextCurrentDay());
-//            if(memoData.getMemoBitmap()!=null){
-//                memoImageView.setImageBitmap(DataConverter.getImage(memoData.getMemoBitmap()));
-//                memoImageView.setVisibility(View.VISIBLE);
-//            }
-
         MemoData item= memos.get(position);
+
+
         textTitle.setText(item.getTitle());
         textMain.setText(item.getMain());
         textAddress.setText(item.getAddress());
@@ -131,6 +131,10 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
             memoImageView.setImageBitmap(DataConverter.getImage(item.getMemoBitmap()));
             memoImageView.setVisibility(View.VISIBLE);
         }
+        Log.d("onBindViewHolder", "뷰출력");
+        Log.d("onBindViewHolder", position+"");
+        Log.d("onBindViewHolder", item.getId()+"");
+        Log.d("onBindViewHolder", memos.size()+"");
 
         //https://www.google.com/search?newwindow=1&ei=FqrWXLOeHe6zmAWTx4DgBg&q=%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C+%EA%B3%B5%EC%9C%A0+%EC%9A%94%EC%86%8C+%EC%A0%84%ED%99%98&oq=%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C+%EA%B3%B5%EC%9C%A0+%EC%9A%94%EC%86%8C+%EC%A0%84%ED%99%98&gs_l=psy-ab.3...104679.109631..109823...6.0..2.164.2148.0j19....2..0....1..gws-wiz.......35i39j0j33i21j33i160.SxUywIRe6ik
         //https://www.youtube.com/watch?v=sv6raw76BRI
@@ -183,11 +187,16 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
 
     //외부에서 아이템을 추가시켜줌
     public void addItem(MemoData memoData){
-        memos.add(memoData);
+        //만약 똑같은 데이터가 memos안에 있다면 추가하지 않는다
+        if(!memos.contains(memoData)) {
+            memos.add(memoData);
+        }
+
         Log.d("ADAPTOR", "ADDitem");
     }
 
     public void removeItem(int position){
+        databaseHelper.deleteEntry(memos.get(position).getId());
         memos.remove(position);
     }
 
