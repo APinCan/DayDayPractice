@@ -167,12 +167,17 @@ public class MemoActivity extends AppCompatActivity {
             if(!textMain.equals("")){
 
                 MemoData memoData = new MemoData(textTitle, textMain, tmp, address, currentDay);
+                //현재 넣으려는 데이터의 id
+                int id=memoAdapter.databaseHelper.addEntry(textTitle, textMain, address, currentDay, tmp);
+
+                memoData.setId(id);
                 memoAdapter.addItem(memoData);
+
                 memoAdapter.notifyDataSetChanged();
             }
         }
 
-        Log.d("ADAPTOR", "onBackPressed()");
+        Log.d("MemoAcitivty", "onBackPressed()");
         super.onBackPressed();
     }
 
