@@ -51,6 +51,10 @@ import java.util.Locale;
 
 import javax.net.ssl.HttpsURLConnection;
 
+
+//서버 : 117.16.136.120/site/api
+//웹 : cpsp.site/dayday
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -81,6 +85,7 @@ public class MainActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("DayDay");
         setSupportActionBar(toolbar);
         memoAdapter=MemoAdapter.getInstance();
         memoAdapter.setmContext(MainActivity.this); //여기서 디비까지 생성
@@ -180,7 +185,7 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if(id == R.id.nav_Directoy_List){
+        if(id == R.id.nav_Directory_List){
         }
         else if(id==R.id.nav_Timeline){
         }

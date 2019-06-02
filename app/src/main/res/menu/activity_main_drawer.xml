@@ -5,7 +5,7 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_Directoy_List"
+            android:id="@+id/nav_Directory_List"
             android:icon="@drawable/ic_folder_black_18dp"
             android:title="Directory"/>
         <item

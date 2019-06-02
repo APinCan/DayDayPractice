@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/aciton_create"
-        android:icon="@drawable/ic_create_black_18dp"
+        android:icon="@drawable/ic_create_white_18dp"
         android:title="create"
         app:showAsAction="always"/>
 

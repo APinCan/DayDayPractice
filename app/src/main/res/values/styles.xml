@@ -17,4 +17,17 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="CustmorActionBarMemo" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/MemoActionBar</item>
+    </style>
+
+    <style name="MemoActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">#000000</item>
+        <item name="android:titleTextStyle">@style/MemoActionBarText</item>
+    </style>
+
+    <style name="MemoActionBarText" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">#0000FF</item>
+    </style>
+
 </resources>

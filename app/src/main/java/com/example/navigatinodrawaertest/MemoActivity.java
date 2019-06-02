@@ -69,6 +69,9 @@ public class MemoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memo);
 
+        android.support.v7.app.ActionBar ab=getSupportActionBar();
+        ab.setTitle("DayDay");
+
         memoAdapter=MemoAdapter.getInstance();
 
         editTextTitle=(EditText) findViewById(R.id.editTextTitle);
