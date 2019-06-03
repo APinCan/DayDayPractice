@@ -37,6 +37,7 @@ import org.w3c.dom.Text;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -49,6 +50,7 @@ public class MemoActivity extends AppCompatActivity {
     private final int PICK_FROM_ALBUM_TEXTRECOGNITION=2001;
     final int MEMO_EDIT = 100;
 
+    int memoPosition=-1;
     EditText editTextTitle;
     EditText editTextMain;
     TextView textViewAddress;
@@ -90,6 +92,10 @@ public class MemoActivity extends AppCompatActivity {
         textViewAddress.setText(intent.getStringExtra("memoAddress"));
         textViewCurrentDay.setText(intent.getStringExtra("memoCurrentDay"));
         byteImage=intent.getByteArrayExtra("memoImage");
+        memoPosition=intent.getIntExtra("memoPosition", -1);
+        intent.removeExtra("memoPosition");
+
+        Log.d("MemoPosition", "memoposition : "+memoPosition);
 
         if(byteImage!=null) {
             Log.d("byteImage", byteImage.length+"");
@@ -166,19 +172,40 @@ public class MemoActivity extends AppCompatActivity {
             tmp=DataConverter.getBytes(inputImage);
         }
 
-        if(!textTitle.equals("")){
-            if(!textMain.equals("")){
+        //만약 기존의 메모를 수정상태로 메모액티비티로 넘어왔다면
+        if(memoPosition!=-1){
+            ArrayList<MemoData> tmpMemos=memoAdapter.getMemos();
 
-                MemoData memoData = new MemoData(textTitle, textMain, tmp, address, currentDay);
-                //현재 넣으려는 데이터의 id
-                int id=memoAdapter.databaseHelper.addEntry(textTitle, textMain, address, currentDay, tmp);
+            tmpMemos.get(memoPosition).setTitle(textTitle);
+            tmpMemos.get(memoPosition).setMain(textMain);
+            tmpMemos.get(memoPosition).setAddress(address);
+            tmpMemos.get(memoPosition).setTextCurrentDay(currentDay);
+            tmpMemos.get(memoPosition).setMemoBitmap(tmp);
 
-                memoData.setId(id);
-                memoAdapter.addItem(memoData);
+            memoAdapter.databaseHelper.updateDB(tmpMemos.get(memoPosition).getId(),
+                    textTitle, textMain, address, currentDay, tmp);
 
-                memoAdapter.notifyDataSetChanged();
+            memoAdapter.notifyItemChanged(memoPosition);
+            memoAdapter.notifyDataSetChanged();
+        }
+        //메모를 처음작성하는경우
+        else{
+            if(!textTitle.equals("")){
+                if(!textMain.equals("")){
+
+                    MemoData memoData = new MemoData(textTitle, textMain, tmp, address, currentDay);
+                    //현재 넣으려는 데이터의 id
+                    int id=memoAdapter.databaseHelper.addEntry(textTitle, textMain, address, currentDay, tmp);
+
+                    memoData.setId(id);
+                    memoAdapter.addItem(memoData);
+
+                    memoAdapter.notifyDataSetChanged();
+                }
             }
         }
+
+
 
         Log.d("MemoAcitivty", "onBackPressed()");
         super.onBackPressed();
@@ -263,7 +290,7 @@ public class MemoActivity extends AppCompatActivity {
         TesseractOCR tesseractOCR = new TesseractOCR(this, "eng");
         String text=tesseractOCR.getOCRResult(inputImage);
 
-        Toast.makeText(this, "recognizing....", Toast.LENGTH_SHORT).show();
+        inputImage=null;
 
         editTextMain.setText(text);
     }
@@ -306,7 +333,9 @@ public class MemoActivity extends AppCompatActivity {
     }
 
 
-    //여기서부터 주소관련 코드들
+    /*
+    주소관련 코드
+     */
     public String getCurrentAddress( double latitude, double longitude) {
         //지오코더... GPS를 주소로 변환
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());

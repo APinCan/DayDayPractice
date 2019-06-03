@@ -20,12 +20,16 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.View;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -37,6 +41,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.widget.Toast;
+
+import com.example.navigatinodrawaertest.dummy.DummyContent;
 
 import org.json.JSONObject;
 
@@ -59,12 +65,14 @@ import retrofit2.Call;
 //웹 : cpsp.site/dayday
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener
+        , DirectoryFragment.OnListFragmentInteractionListener{
 
     final int PERMISSION = 1001;
     final int MEMO_EDIT = 100;
 
     private MemoAdapter memoAdapter;
+    Fragment fragment=null;
 
     //private NetworkService networkService;
 
@@ -75,6 +83,16 @@ public class MainActivity extends AppCompatActivity
 
             }
         }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        return super.onContextItemSelected(item);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
     }
 
     @Override
@@ -184,9 +202,19 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        String title=getString(R.string.app_name);
 
-        if (id == R.id.nav_Directory_List) {
-        } else if (id == R.id.nav_Timeline) {
+        if(id==R.id.nav_home){
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().remove(fragment).commit();
+            fragmentManager.popBackStack();
+        }
+        else if (id == R.id.nav_Directory_List) {
+            fragment=new DirectoryFragment();
+            title="Directory";
+        }
+        else if (id == R.id.nav_Timeline) {
+
         }
 //        else if (id == R.id.nav_home) {
 //            // Handle the camera action
@@ -203,8 +231,20 @@ public class MainActivity extends AppCompatActivity
 
         }
 
+        if(fragment!=null){
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.drawer_container, fragment);
+            ft.commit();
+        }
+
+        //툴바에 타이틀 적용
+        if(getSupportActionBar()!=null){
+            getSupportActionBar().setTitle(title);
+        }
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+
         return true;
     }
 
@@ -381,5 +421,10 @@ public class MainActivity extends AppCompatActivity
 //          }
 //        });
 //      }
+    }
+
+    @Override
+    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+
     }
 }
