@@ -120,7 +120,9 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
     //아이템을 하나하나 보여주는 능력
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-        MemoData item= memos.get(position);
+       int realPosition=holder.getAdapterPosition();
+
+        MemoData item= memos.get(realPosition);
 
 
         textTitle.setText(item.getTitle());
@@ -141,22 +143,24 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, "click"+position, Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "click"+holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
                 Intent intent=new Intent(mContext, MemoActivity.class);
-                intent.putExtra("memoTitle",  memos.get(position).getTitle());
-                intent.putExtra("memoMain", memos.get(position).getMain());
-                intent.putExtra("memoAddress", memos.get(position).getAddress());
-                intent.putExtra("memoCurrentDay", memos.get(position).getTextCurrentDay());
+                intent.putExtra("memoTitle",  memos.get(holder.getAdapterPosition()).getTitle());
+                intent.putExtra("memoMain", memos.get(holder.getAdapterPosition()).getMain());
+                intent.putExtra("memoAddress", memos.get(holder.getAdapterPosition()).getAddress());
+                intent.putExtra("memoCurrentDay", memos.get(holder.getAdapterPosition()).getTextCurrentDay());
 
 //                byte[] memoImage=DataConverter.getBytes(memos.get(position).getMemoBitmap());
 //                intent.putExtra("memoImage", memoImage);
-                intent.putExtra("memoImage", memos.get(position).getMemoBitmap());
+                intent.putExtra("memoImage", memos.get(holder.getAdapterPosition()).getMemoBitmap());
 
                 Log.d("ADAPTOR", "onBindViewHolder");
                 Log.d("ADAPTOR", memos.get(position).getTitle());
                 Log.d("ADAPTOR", memos.get(position).getMain());
 
-                removeItem(position);
+                removeItem(holder.getAdapterPosition());
+                notifyItemRemoved(holder.getAdapterPosition());
+                notifyItemChanged(holder.getAdapterPosition(), memos.size());
                 //하나 넣기
                 ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)mContext, v, "memoTransition");
 
@@ -170,7 +174,7 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
             @Override
             public boolean onLongClick(View v) {
 
-                removeItem(position);
+                removeItem(holder.getAdapterPosition());
                 notifyDataSetChanged();
                 //이메서드에서 이벤트에대한 처리가 끝나서 다른데서 처리할 필요 없으면 true
                 //여기서 이벤트 처리를 끝내지 못했을 경우 false
@@ -200,4 +204,8 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
         memos.remove(position);
     }
 
+//    @Override
+//    public int getItemViewType(int position) {
+//        return position;
+//    }
 }

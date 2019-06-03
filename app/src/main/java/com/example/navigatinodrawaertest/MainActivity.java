@@ -51,6 +51,9 @@ import java.util.Locale;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import okhttp3.internal.Version;
+import retrofit2.Call;
+
 
 //서버 : 117.16.136.120/site/api
 //웹 : cpsp.site/dayday
@@ -58,20 +61,17 @@ import javax.net.ssl.HttpsURLConnection;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    final int PERMISSION =1001;
-    final int MEMO_EDIT=100;
+    final int PERMISSION = 1001;
+    final int MEMO_EDIT = 100;
 
     private MemoAdapter memoAdapter;
 
-//    DatabaseHelper databaseHelper;
-//    SQLiteDatabase db;
-//    SQLiteDatabase database;
-
+    //private NetworkService networkService;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(requestCode==MEMO_EDIT){
-            if(resultCode==RESULT_OK){
+        if (requestCode == MEMO_EDIT) {
+            if (resultCode == RESULT_OK) {
 
             }
         }
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("DayDay");
         setSupportActionBar(toolbar);
-        memoAdapter=MemoAdapter.getInstance();
+        memoAdapter = MemoAdapter.getInstance();
         memoAdapter.setmContext(MainActivity.this); //여기서 디비까지 생성
         memoAdapter.databaseHelper.startLoadData();
 
@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        Intent intent=new Intent(this, MemoActivity.class);
+        Intent intent = new Intent(this, MemoActivity.class);
         //noinspection SimplifiableIfStatement
         //원래코드
 //        if (id == R.id.action_settings) {
@@ -185,9 +185,8 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if(id == R.id.nav_Directory_List){
-        }
-        else if(id==R.id.nav_Timeline){
+        if (id == R.id.nav_Directory_List) {
+        } else if (id == R.id.nav_Timeline) {
         }
 //        else if (id == R.id.nav_home) {
 //            // Handle the camera action
@@ -211,11 +210,11 @@ public class MainActivity extends AppCompatActivity
 
     //현재 위치정보를 받아오기 https://bottlecok.tistory.com/54
     //https://webnautes.tistory.com/1315 권한까지
-    public void getLocation(){
-        LocationManager lm=(LocationManager)getSystemService(Context.LOCATION_SERVICE);
+    public void getLocation() {
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Location location;
         //가장최근 위치정보
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         }
 
@@ -223,10 +222,10 @@ public class MainActivity extends AppCompatActivity
         LocationListener gpsLocationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                String provider=location.getProvider();
-                double longitude=location.getLongitude();
-                double latitude=location.getLatitude();
-                double altitude=location.getAltitude();
+                String provider = location.getProvider();
+                double longitude = location.getLongitude();
+                double latitude = location.getLatitude();
+                double altitude = location.getAltitude();
 
 //                txtResult.setText("위치정보 : " + provider + "\n" +
 //                        "위도 : " + longitude + "\n" +
@@ -250,13 +249,13 @@ public class MainActivity extends AppCompatActivity
 
 
     //권한을 체크
-    public void checkPermission(){
+    public void checkPermission() {
         //각 권한들이 설정되어있는지 확인
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
                 || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
                 || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-        ){
+        ) {
             //권한이 하나라도 설정이 안되어 있으면 permission을 요청하는 팝업
             ActivityCompat.requestPermissions(this, new String[]{
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -272,23 +271,115 @@ public class MainActivity extends AppCompatActivity
     //reqeustPermissions로 권한요청 한것에 대한 결과가 반환
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
+        switch (requestCode) {
             case PERMISSION:
                 //grantResult는 requestPermission에 요청된 String[]순서로 들어온다
-                if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //권한 허가
-                }
-                else{
+                } else {
                     //권한거부
                 }
 
-                Context context =  MainActivity.this;
-                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.parse("package:"+ context.getPackageName()));
+                Context context = MainActivity.this;
+                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.parse("package:" + context.getPackageName()));
                 startActivityForResult(intent, 0);
 
-                return ;
+                return;
         }
     }
 
+    public void getVersion() {
+//        GET
+//        Call<List<Version>> versionCall = networkService.get_version();
+//        versionCall.enqueue(new Callback<List<Version>>(){
+//            @Override
+//            public void onResponse(Call<List<Version>> call, Response<List<Version>> response){
+//                  if(response.isSuccessful()){
+//                      List<Version> versionList = response.body();
+//
+//                      String version_txt="";
+//                      for(Version version:versionList){
+//                          version_txt+=version.getVersion()+"\n";
+//                      }
+//
+//                      tv1.setText(version_txt);
+//                      }
+//                      else{
+//                          int StatusCode=response.code();
+//                          Log.i(ApplicationController.TAG, "Status Code: "+StatusCode);
+//                      }
+//                  }
+//
+//                  @Override
+//                  public void onFailure(Call<List<Version>> call, Throwable t){
+//                      Log.i(ApplicationController.TAG, "Fail Message: "+t.getMessage());
+//                  }
+//              });
+    }
 
+    public void postVersion() {
+//        POST
+//        Version version = new Version();
+//        version.setVersion("1.0.0.1");
+//        Call<Version> postCall = networkService.post_version(version);
+//        postCall.enqueue(new Callback<Version>(){
+//          @Override
+//          public void onResponse(Call<Version> call, Response<Version> response){
+//          if(response.isSuccessful()){
+//              tv2.setText("등록");
+//          }
+//          else{
+//              int StatusCode = response.code();
+//              Log.i(ApplicationController.TAG, "Status Code : "+StatusCode);
+//          }
+//       }
+//
+//        @Override
+//        public void onFailure(Call<Version> call, Throwable t){
+//          Log.i(ApplicationController.TAG, "Fail Message: "+t.getMessage());
+//        }
+//     });
+    }
+
+    public void patchVersion(){
+//        PATCH
+//        Version version = new Version();
+//        version.setVersion("1.0.0.0.1");
+//        Call<Version> patchCall = networkService.patch_version(1, version);
+//        patchCall.enqueue(new Callback<Version>(){
+//          @Override
+//          public void onResponse(Call<Version> call, Response<Version> response){
+//              if(response.isSuccessful()){
+//                  tv.setText("업데이트");
+//              }
+//              else{
+//                  int StatusCode=response.code();
+//                  Log.i(ApplicationController.TAG, "Status Code:"+StatusCode);
+//              }
+//        });
+//      }
+    }
+
+    public void deleteVersion() {
+//        DELETE
+//        Call<Version> deleteCall = networkService.delete_version(1);
+//        deleteCall.enqueue(new Callback<Version>(){
+//          @Override
+//          public void onResponse(Call<Version> call, Response<Version> response){
+//              if(response.isSuccessful()){
+//                  tv4.setText("삭제");
+//              }
+//              else{
+//                  int StatusCode = response.code();
+//                  Log.i(ApplicationController.TAG, "Status Code: "+StatusCode);
+//              }
+//          }
+//
+//          @Override
+//          public void onFailure(Call<Version> call, Throwable t){
+//              Log.i(ApplicationController.TAG, "Fail message: "+t.getMessage());
+//          }
+//        });
+//      }
+    }
 }
