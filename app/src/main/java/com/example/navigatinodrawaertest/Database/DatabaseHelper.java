@@ -1,4 +1,4 @@
-package com.example.navigatinodrawaertest;
+package com.example.navigatinodrawaertest.Database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,8 +9,10 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.util.ArrayList;
+import com.example.navigatinodrawaertest.MemoAdapter;
+import com.example.navigatinodrawaertest.Datas.MemoData;
 
+//database를 사용하기 위한 클래스
 public class DatabaseHelper extends SQLiteOpenHelper {
     SQLiteDatabase db;
     MemoAdapter memoAdapter;

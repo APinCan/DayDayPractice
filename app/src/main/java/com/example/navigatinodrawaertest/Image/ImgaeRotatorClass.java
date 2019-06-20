@@ -1,4 +1,4 @@
-package com.example.navigatinodrawaertest;
+package com.example.navigatinodrawaertest.Image;
 
 import android.content.Context;
 import android.graphics.Bitmap;

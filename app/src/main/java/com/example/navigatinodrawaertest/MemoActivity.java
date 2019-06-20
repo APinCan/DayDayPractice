@@ -3,16 +3,11 @@ package com.example.navigatinodrawaertest;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -25,14 +20,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
+import com.example.navigatinodrawaertest.Datas.MemoData;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,7 +36,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import static com.example.navigatinodrawaertest.ImgaeRotatorClass.handleSamplingAndRotationBitmap;
+import static com.example.navigatinodrawaertest.Image.ImgaeRotatorClass.handleSamplingAndRotationBitmap;
 
 public class MemoActivity extends AppCompatActivity {
     private final int PICK_FROM_ALBUM = 2000;

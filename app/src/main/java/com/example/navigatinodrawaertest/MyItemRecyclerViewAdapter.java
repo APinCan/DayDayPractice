@@ -1,12 +1,12 @@
 package com.example.navigatinodrawaertest;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.navigatinodrawaertest.Datas.MemoData;
 import com.example.navigatinodrawaertest.DirectoryFragment.OnListFragmentInteractionListener;
 import com.example.navigatinodrawaertest.dummy.DummyContent.DummyItem;
 

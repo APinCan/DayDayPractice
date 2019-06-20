@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="5dp"
+    android:layout_margin="15dp"
+    android:background="#FFFFFF"
+    android:elevation="10dp"
     android:orientation="vertical"
     android:paddingTop="10dp"
-    android:elevation="10dp"
-    android:background="#FFFFFF"
     tools:context=".MemoActivity">
 
     <EditText
@@ -26,36 +26,36 @@
         android:layout_width="match_parent"
         android:layout_height="350dp"
         android:layout_below="@id/editTextTitle"
-        android:visibility="gone"
-        android:scaleType="fitCenter" />
+        android:scaleType="fitCenter"
+        android:visibility="gone" />
 
     <EditText
         android:id="@+id/editTextMain"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/imageViewMemoActivity"
         android:layout_margin="10dp"
         android:background="@android:color/transparent"
         android:ems="10"
         android:hint="내용"
         android:inputType="textMultiLine"
         android:scrollbars="vertical"
-        android:layout_below="@id/imageViewMemoActivity"
         android:text="" />
 
     <TextView
         android:id="@+id/textViewAddressActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
         android:layout_below="@id/editTextMain"
+        android:layout_margin="10dp"
         android:text="주소" />
 
     <TextView
         android:id="@+id/textViewCurrentDayActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
         android:layout_below="@id/textViewAddressActivity"
+        android:layout_margin="10dp"
         android:text="날짜" />
 
 </RelativeLayout>

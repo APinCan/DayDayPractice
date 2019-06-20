@@ -2,13 +2,8 @@ package com.example.navigatinodrawaertest;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -17,17 +12,12 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.View;
@@ -42,23 +32,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.widget.Toast;
 
+import com.example.navigatinodrawaertest.Datas.User;
+import com.example.navigatinodrawaertest.Servercon.APIClient;
+import com.example.navigatinodrawaertest.Servercon.NetworkService;
 import com.example.navigatinodrawaertest.dummy.DummyContent;
 
-import org.json.JSONObject;
-
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
-import java.util.Locale;
-
-import javax.net.ssl.HttpsURLConnection;
 
 import okhttp3.internal.Version;
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 //서버 : 117.16.136.120/site/api
@@ -74,7 +58,7 @@ public class MainActivity extends AppCompatActivity
     private MemoAdapter memoAdapter;
     Fragment fragment=null;
 
-    //private NetworkService networkService;
+    private NetworkService networkService;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -100,6 +84,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         checkPermission();
 
+        networkService = APIClient.getClient().create(NetworkService.class);
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -117,36 +102,18 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
-//        databaseHelper=new DatabaseHelper(MainActivity.this);
-//        try{
-//            db=databaseHelper.getWritableDatabase();
-//        } catch (SQLException ex){
-//            db=databaseHelper.getReadableDatabase();
-//        }
-        //데이터베이스는 데이터베이스헬퍼안에 생성성//        database=databaseHelper.getWritableDatabase();
-
         getLocation();
-
-//        memoAdapter= new MemoAdapter(MainActivity.this);
-
 
         //recycleView 초기화
         RecyclerView recyclerView = findViewById(R.id.memo_recyclerView);
 
-        //StaggeredGridLayoutManager staggeredGridLayoutManager=new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-
-//        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        //recyclerView.setLayoutManager(staggeredGridLayoutManager);
         recyclerView.setAdapter(memoAdapter);
-
-        //어댑터뷰 더미데이터
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         Log.d("onStartMainActivity", "MainActivity");
-//        databaseHelper.addEntry();
     }
 
     @Override
@@ -162,7 +129,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
-
     }
 
     @Override
@@ -179,11 +145,6 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         Intent intent = new Intent(this, MemoActivity.class);
-        //noinspection SimplifiableIfStatement
-        //원래코드
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
 
         switch (id) {
             case R.id.aciton_create:
@@ -205,26 +166,19 @@ public class MainActivity extends AppCompatActivity
         String title=getString(R.string.app_name);
 
         if(id==R.id.nav_home){
+
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction().remove(fragment).commit();
             fragmentManager.popBackStack();
         }
         else if (id == R.id.nav_Directory_List) {
+            getUser();
             fragment=new DirectoryFragment();
             title="Directory";
         }
         else if (id == R.id.nav_Timeline) {
 
         }
-//        else if (id == R.id.nav_home) {
-//            // Handle the camera action
-//        } else if (id == R.id.nav_gallery) {
-//
-//        } else if (id == R.id.nav_slideshow) {
-//
-//        } else if (id == R.id.nav_tools) {
-//
-//        }
         else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
@@ -328,99 +282,34 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void getVersion() {
-//        GET
-//        Call<List<Version>> versionCall = networkService.get_version();
-//        versionCall.enqueue(new Callback<List<Version>>(){
-//            @Override
-//            public void onResponse(Call<List<Version>> call, Response<List<Version>> response){
-//                  if(response.isSuccessful()){
-//                      List<Version> versionList = response.body();
-//
-//                      String version_txt="";
-//                      for(Version version:versionList){
-//                          version_txt+=version.getVersion()+"\n";
-//                      }
-//
-//                      tv1.setText(version_txt);
-//                      }
-//                      else{
-//                          int StatusCode=response.code();
-//                          Log.i(ApplicationController.TAG, "Status Code: "+StatusCode);
-//                      }
-//                  }
-//
-//                  @Override
-//                  public void onFailure(Call<List<Version>> call, Throwable t){
-//                      Log.i(ApplicationController.TAG, "Fail Message: "+t.getMessage());
-//                  }
-//              });
-    }
+    public void getUser() {
+        Call<List<User>> userCall = networkService.get_user();
+        userCall.enqueue(new Callback<List<User>>(){
+            @Override
+            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                if(response.isSuccessful()){
+                    List<User> userList = response.body();
 
-    public void postVersion() {
-//        POST
-//        Version version = new Version();
-//        version.setVersion("1.0.0.1");
-//        Call<Version> postCall = networkService.post_version(version);
-//        postCall.enqueue(new Callback<Version>(){
-//          @Override
-//          public void onResponse(Call<Version> call, Response<Version> response){
-//          if(response.isSuccessful()){
-//              tv2.setText("등록");
-//          }
-//          else{
-//              int StatusCode = response.code();
-//              Log.i(ApplicationController.TAG, "Status Code : "+StatusCode);
-//          }
-//       }
-//
-//        @Override
-//        public void onFailure(Call<Version> call, Throwable t){
-//          Log.i(ApplicationController.TAG, "Fail Message: "+t.getMessage());
-//        }
-//     });
-    }
+                    String userText="";
+                    for(User user : userList){
+                        userText+= user.id.toString()+
+                                user.email+
+                                user.password+
+                                "\n";
+                    }
+                    Toast.makeText(getApplicationContext(), userText, Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    int statusCode=response.code();
+                    Log.i("MainActivity.getUser", "statuscode : "+statusCode);
+                }
+            }
 
-    public void patchVersion(){
-//        PATCH
-//        Version version = new Version();
-//        version.setVersion("1.0.0.0.1");
-//        Call<Version> patchCall = networkService.patch_version(1, version);
-//        patchCall.enqueue(new Callback<Version>(){
-//          @Override
-//          public void onResponse(Call<Version> call, Response<Version> response){
-//              if(response.isSuccessful()){
-//                  tv.setText("업데이트");
-//              }
-//              else{
-//                  int StatusCode=response.code();
-//                  Log.i(ApplicationController.TAG, "Status Code:"+StatusCode);
-//              }
-//        });
-//      }
-    }
-
-    public void deleteVersion() {
-//        DELETE
-//        Call<Version> deleteCall = networkService.delete_version(1);
-//        deleteCall.enqueue(new Callback<Version>(){
-//          @Override
-//          public void onResponse(Call<Version> call, Response<Version> response){
-//              if(response.isSuccessful()){
-//                  tv4.setText("삭제");
-//              }
-//              else{
-//                  int StatusCode = response.code();
-//                  Log.i(ApplicationController.TAG, "Status Code: "+StatusCode);
-//              }
-//          }
-//
-//          @Override
-//          public void onFailure(Call<Version> call, Throwable t){
-//              Log.i(ApplicationController.TAG, "Fail message: "+t.getMessage());
-//          }
-//        });
-//      }
+            @Override
+            public void onFailure(Call<List<User>> call, Throwable t) {
+                call.cancel();
+            }
+        });
     }
 
     @Override
