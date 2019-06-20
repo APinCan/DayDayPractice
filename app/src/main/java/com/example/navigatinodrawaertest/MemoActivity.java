@@ -68,17 +68,7 @@ public class MemoActivity extends AppCompatActivity {
         android.support.v7.app.ActionBar ab=getSupportActionBar();
         ab.setTitle("DayDay");
 
-        memoAdapter=MemoAdapter.getInstance();
-
-        editTextTitle=(EditText) findViewById(R.id.editTextTitle);
-        editTextMain=(EditText) findViewById(R.id.editTextMain);
-        textViewAddress=(TextView)findViewById(R.id.textViewAddressActivity);
-        textViewCurrentDay=(TextView)findViewById(R.id.textViewCurrentDayActivity);
-        meemoImageView=(ImageView)findViewById(R.id.imageViewMemoActivity);
-
-
-        editTextTitle.setTransitionName("transitionTitle");
-        editTextMain.setTransitionName("transitionMain");
+        initialize();
 
         intent=getIntent();
         editTextTitle.setText(intent.getStringExtra("memoTitle"));
@@ -98,6 +88,20 @@ public class MemoActivity extends AppCompatActivity {
         }
 
         Log.d("onCreate", "onCreate");
+    }
+
+    private void initialize(){
+        memoAdapter=MemoAdapter.getInstance();
+
+        editTextTitle=(EditText) findViewById(R.id.editTextTitle);
+        editTextMain=(EditText) findViewById(R.id.editTextMain);
+        textViewAddress=(TextView)findViewById(R.id.textViewAddressActivity);
+        textViewCurrentDay=(TextView)findViewById(R.id.textViewCurrentDayActivity);
+        meemoImageView=(ImageView)findViewById(R.id.imageViewMemoActivity);
+
+
+        editTextTitle.setTransitionName("transitionTitle");
+        editTextMain.setTransitionName("transitionMain");
     }
 
     @Override
@@ -160,7 +164,8 @@ public class MemoActivity extends AppCompatActivity {
         byte[] tmp;
 
         if(inputImage==null){
-           tmp=byteImage;
+//           tmp=byteImage;
+            tmp=null;
         }
         else{
             tmp=DataConverter.getBytes(inputImage);
