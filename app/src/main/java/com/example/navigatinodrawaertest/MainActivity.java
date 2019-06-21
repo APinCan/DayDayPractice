@@ -80,6 +80,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        Log.d("onResumeMainActivity", "MainActivity");
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         checkPermission();
@@ -249,13 +256,15 @@ public class MainActivity extends AppCompatActivity
                 || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
                 || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
         ) {
             //권한이 하나라도 설정이 안되어 있으면 permission을 요청하는 팝업
             ActivityCompat.requestPermissions(this, new String[]{
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.READ_EXTERNAL_STORAGE,
                     Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.CAMERA
                     }, PERMISSION
             );
         }
@@ -316,4 +325,40 @@ public class MainActivity extends AppCompatActivity
     public void onListFragmentInteraction(DummyContent.DummyItem item) {
 
     }
+
+    /*
+    // 퍼미션 확인하는 다른 방법
+      private boolean hasPermissions(String[] permissions) {
+        // 퍼미션 확인
+        int result = -1;
+        for (int i = 0; i < permissions.length; i++) {
+            result = ContextCompat.checkSelfPermission(getApplicationContext(), permissions[i]);
+        }
+        if (result == PackageManager.PERMISSION_GRANTED) {
+            return true;
+
+        } else {
+            return false;
+        }
+    }
+
+
+    private void requestNecessaryPermissions(String[] permissions) {
+        ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE: {
+                //퍼미션을 거절했을 때 메시지 출력 후 종료
+                if (!hasPermissions(PERMISSIONS)) {
+                    Toast.makeText(getApplicationContext(), "CAMERA PERMISSION FAIL", Toast.LENGTH_LONG).show();
+                    finish();
+                }
+                return;
+            }
+        }
+    }
+     */
 }

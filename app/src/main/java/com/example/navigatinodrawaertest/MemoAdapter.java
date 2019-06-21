@@ -97,7 +97,6 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
             textAddress = itemView.findViewById(R.id.textViewAddress);
             textCurrentDay = itemView.findViewById(R.id.textViewCurrentDay);
             memoImageView = itemView.findViewById(R.id.imageViewMemos);
-
 //
 //            itemView.setOnClickListener(new View.OnClickListener() {
 //                @Override
@@ -154,10 +153,13 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
     //아이템을 하나하나 보여주는 능력
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
+
        final int realPosition=holder.getAdapterPosition();
 
         MemoData item= memos.get(realPosition);
 
+        memoImageView.setImageResource(0);
+        memoImageView.setVisibility(View.GONE);
 
         textTitle.setText(item.getTitle());
         textMain.setText(item.getMain());
@@ -167,6 +169,8 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
             memoImageView.setImageBitmap(DataConverter.getImage(item.getMemoBitmap()));
             memoImageView.setVisibility(View.VISIBLE);
         }
+
+        memoImageView.invalidate();
         Log.d("onBindViewHolder", "뷰출력");
         Log.d("onBindViewHolder", position+"");
         Log.d("onBindViewHolder", realPosition+"");
@@ -182,7 +186,7 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Toast.makeText(mContext, "click"+holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "click"+holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
 //                Intent intent=new Intent(mContext, MemoActivity.class);
 //                intent.putExtra("memoTitle",  memos.get(holder.getAdapterPosition()).getTitle());
 //                intent.putExtra("memoMain", memos.get(holder.getAdapterPosition()).getMain());
@@ -235,10 +239,9 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                Toast.makeText(mContext, "LongClick : "+realPosition, Toast.LENGTH_SHORT).show();
 
-
-
-                removeItem(holder.getAdapterPosition());
+                removeItem(realPosition);
 
                 Log.d("setOnLongClickListneer", holder.getAdapterPosition()+"");
 
@@ -248,6 +251,8 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
                 return true;
             }
         });
+
+        holder.setIsRecyclable(true);
     }
 
     //recyclerview의 아이템의 총 개수
@@ -270,11 +275,21 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
         databaseHelper.deleteEntry(memos.get(position).getId());
         memos.remove(position);
 
+
         notifyItemRemoved(position);
+        notifyDataSetChanged();
     }
 
     public ArrayList<MemoData> getMemos(){
         return memos;
+    }
+
+    public void clearMemos(){
+        this.memos.clear();
+    }
+
+    public void setMemos(ArrayList<MemoData> memos){
+        this.memos=memos;
     }
 
     @Override

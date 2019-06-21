@@ -26,7 +26,7 @@ public class DataConverter {
     public static Bitmap bitmapResizer(Bitmap bitmap){
         Bitmap resized=null;
         BitmapFactory.Options options =new BitmapFactory.Options();
-        options.inSampleSize=8;
+        options.inSampleSize=4;
 
         resized=Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), true);
 

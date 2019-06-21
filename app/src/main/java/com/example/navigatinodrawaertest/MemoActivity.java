@@ -42,6 +42,7 @@ public class MemoActivity extends AppCompatActivity {
     private final int PICK_FROM_ALBUM = 2000;
     private static final int GPS_ENABLE_REQUEST_CODE = 2002;
     private final int PICK_FROM_ALBUM_TEXTRECOGNITION=2001;
+    private final int ACTIVITY_REQUEST_CODE =1;
     final int MEMO_EDIT = 100;
 
     int memoPosition=-1;
@@ -56,14 +57,17 @@ public class MemoActivity extends AppCompatActivity {
     Button buttonOK, buttonCancel;
     ImageView dialogImageView;
     ImageView meemoImageView;
-    byte[] byteImage;
+    byte[] byteImage=null;
     private GpsTracker gpsTracker;
 
+    static  TesseractOCR tesseractOCR;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memo);
+
+        tesseractOCR = new TesseractOCR(this, "eng");
 
         android.support.v7.app.ActionBar ab=getSupportActionBar();
         ab.setTitle("DayDay");
@@ -126,6 +130,10 @@ public class MemoActivity extends AppCompatActivity {
             case R.id.action_capture_image_convert:
                 gotToAlbumTextRecognition();
                 return true;
+            case R.id.action_activate_camera:
+                Intent cameraActivity = new Intent(MemoActivity.this, CameraActivity.class);
+                startActivityForResult(cameraActivity, ACTIVITY_REQUEST_CODE);
+                return true;
                 default:
                     return super.onOptionsItemSelected(item);
         }
@@ -163,48 +171,55 @@ public class MemoActivity extends AppCompatActivity {
         String textMain=editTextMain.getText().toString();
         byte[] tmp;
 
-        if(inputImage==null){
-//           tmp=byteImage;
-            tmp=null;
-        }
-        else{
-            tmp=DataConverter.getBytes(inputImage);
-        }
+//        if(inputImage==null){
+////           tmp=byteImage;
+//            tmp=null;
+//        }
+//        else{
+//            tmp=DataConverter.getBytes(inputImage);
+//        }
+//        ArrayList<MemoData> tmpMemos=memoAdapter.getMemos();
+        ArrayList<MemoData> tmpMemos = new ArrayList<>();
+        tmpMemos.addAll(memoAdapter.getMemos());
+
+        memoAdapter.clearMemos();
+
 
         //만약 기존의 메모를 수정상태로 메모액티비티로 넘어왔다면
         if(memoPosition!=-1){
-            ArrayList<MemoData> tmpMemos=memoAdapter.getMemos();
 
             tmpMemos.get(memoPosition).setTitle(textTitle);
             tmpMemos.get(memoPosition).setMain(textMain);
             tmpMemos.get(memoPosition).setAddress(address);
             tmpMemos.get(memoPosition).setTextCurrentDay(currentDay);
-            tmpMemos.get(memoPosition).setMemoBitmap(tmp);
+//            tmpMemos.get(memoPosition).setMemoBitmap(tmp);
+            tmpMemos.get(memoPosition).setMemoBitmap(byteImage);
 
             memoAdapter.databaseHelper.updateDB(tmpMemos.get(memoPosition).getId(),
-                    textTitle, textMain, address, currentDay, tmp);
+                    textTitle, textMain, address, currentDay, byteImage);
 
-            memoAdapter.notifyItemChanged(memoPosition);
-            memoAdapter.notifyDataSetChanged();
+//            memoAdapter.notifyItemChanged(memoPosition);
+//            memoAdapter.notifyDataSetChanged();
         }
         //메모를 처음작성하는경우
         else{
             if(!textTitle.equals("")){
                 if(!textMain.equals("")){
 
-                    MemoData memoData = new MemoData(textTitle, textMain, tmp, address, currentDay);
+                    MemoData memoData = new MemoData(textTitle, textMain, byteImage, address, currentDay);
                     //현재 넣으려는 데이터의 id
-                    int id=memoAdapter.databaseHelper.addEntry(textTitle, textMain, address, currentDay, tmp);
+                    int id=memoAdapter.databaseHelper.addEntry(textTitle, textMain, address, currentDay, byteImage);
 
                     memoData.setId(id);
-                    memoAdapter.addItem(memoData);
-
-                    memoAdapter.notifyDataSetChanged();
+                    tmpMemos.add(memoData);
+//                    memoAdapter.addItem(memoData);
+//                    memoAdapter.notifyDataSetChanged();
                 }
             }
         }
+        memoAdapter.setMemos(tmpMemos);
 
-
+        memoAdapter.notifyDataSetChanged();
 
         Log.d("MemoAcitivty", "onBackPressed()");
         super.onBackPressed();
@@ -244,6 +259,7 @@ public class MemoActivity extends AppCompatActivity {
 
                     meemoImageView.setImageBitmap(inputImage);
 
+                    byteImage= DataConverter.getBytes(inputImage);
                 } catch (Exception e){
                     e.printStackTrace();
                 }
@@ -278,6 +294,9 @@ public class MemoActivity extends AppCompatActivity {
                 }
             }
         }
+        else if(requestCode==ACTIVITY_REQUEST_CODE){
+            editTextMain.setText(data.getStringExtra("STRING_OCR_RESULT"));
+        }
         else if(resultCode==MEMO_EDIT){
             if(resultCode==RESULT_OK){
 
@@ -286,7 +305,8 @@ public class MemoActivity extends AppCompatActivity {
     }
 
     public void textRecognition(){
-        TesseractOCR tesseractOCR = new TesseractOCR(this, "eng");
+//        TesseractOCR tesseractOCR = new TesseractOCR(this, "eng");
+//        tesseractOCR = new TesseractOCR(this, "eng");
         String text=tesseractOCR.getOCRResult(inputImage);
 
         inputImage=null;

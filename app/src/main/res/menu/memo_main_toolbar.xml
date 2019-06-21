@@ -14,4 +14,10 @@
         android:title="captrueImageToText"
         app:showAsAction="always"/>
 
+    <item
+        android:id="@+id/action_activate_camera"
+        android:icon="@drawable/ic_camera_alt_white_18dp"
+        android:title="activateCamera"
+        app:showAsAction="always"/>
+
 </menu>
