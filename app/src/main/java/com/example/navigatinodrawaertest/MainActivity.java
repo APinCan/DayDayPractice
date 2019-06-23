@@ -32,11 +32,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.widget.Toast;
 
+import com.example.navigatinodrawaertest.Datas.MemoData;
 import com.example.navigatinodrawaertest.Datas.User;
 import com.example.navigatinodrawaertest.Servercon.APIClient;
 import com.example.navigatinodrawaertest.Servercon.NetworkService;
 import com.example.navigatinodrawaertest.dummy.DummyContent;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.internal.Version;
@@ -56,9 +58,13 @@ public class MainActivity extends AppCompatActivity
     final int MEMO_EDIT = 100;
 
     private MemoAdapter memoAdapter;
+    private SelectedDayAdapter dayAdapter;
     Fragment fragment=null;
+    RecyclerView recyclerView;
 
-    private NetworkService networkService;
+    MenuItem action_create;
+
+//    private NetworkService networkService;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -91,7 +97,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         checkPermission();
 
-        networkService = APIClient.getClient().create(NetworkService.class);
+//        networkService = APIClient.getClient().create(NetworkService.class);
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -100,6 +106,7 @@ public class MainActivity extends AppCompatActivity
         memoAdapter = MemoAdapter.getInstance();
         memoAdapter.setmContext(MainActivity.this); //여기서 디비까지 생성
         memoAdapter.databaseHelper.startLoadData();
+        dayAdapter = new SelectedDayAdapter(MainActivity.this);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -112,7 +119,7 @@ public class MainActivity extends AppCompatActivity
         getLocation();
 
         //recycleView 초기화
-        RecyclerView recyclerView = findViewById(R.id.memo_recyclerView);
+        recyclerView = findViewById(R.id.memo_recyclerView);
 
         recyclerView.setAdapter(memoAdapter);
     }
@@ -142,6 +149,9 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
+        action_create=menu.findItem(R.id.aciton_create);
+
         return true;
     }
 
@@ -169,19 +179,39 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
+        recyclerView.setAdapter(null);
+
         int id = item.getItemId();
         String title=getString(R.string.app_name);
 
         if(id==R.id.nav_home){
+            if(fragment==null){
 
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().remove(fragment).commit();
-            fragmentManager.popBackStack();
+            }
+            else {
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction().remove(fragment).commit();
+                fragmentManager.popBackStack();
+            }
+
+            recyclerView.setAdapter(memoAdapter);
+//            memoAdapter.notifyDataSetChanged();
+            action_create.setVisible(true);
         }
         else if (id == R.id.nav_Directory_List) {
-            getUser();
+//            getUser();
+            Bundle args = new Bundle();
+            ArrayList<String> tmpArray= new ArrayList<>();
+
+            args.putStringArrayList("DAY_ARRAY", findDay());
+
             fragment=new DirectoryFragment();
+            fragment.setArguments(args);
             title="Directory";
+
+            recyclerView.setAdapter(dayAdapter);
+//            dayAdapter.notifyDataSetChanged();
+            action_create.setVisible(false);
         }
         else if (id == R.id.nav_Timeline) {
 
@@ -205,6 +235,8 @@ public class MainActivity extends AppCompatActivity
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+
+
 
         return true;
     }
@@ -291,39 +323,20 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void getUser() {
-        Call<List<User>> userCall = networkService.get_user();
-        userCall.enqueue(new Callback<List<User>>(){
-            @Override
-            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
-                if(response.isSuccessful()){
-                    List<User> userList = response.body();
-
-                    String userText="";
-                    for(User user : userList){
-                        userText+= user.id.toString()+
-                                user.email+
-                                user.password+
-                                "\n";
-                    }
-                    Toast.makeText(getApplicationContext(), userText, Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    int statusCode=response.code();
-                    Log.i("MainActivity.getUser", "statuscode : "+statusCode);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<User>> call, Throwable t) {
-                call.cancel();
-            }
-        });
-    }
-
     @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+    public void onListFragmentInteraction(String date) {
+        recyclerView.setAdapter(null);
 
+        if(getSupportActionBar()!=null){
+            getSupportActionBar().setTitle(date);
+        }
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().remove(fragment).commit();
+        fragmentManager.popBackStack();
+
+        dayAdapter.setSelectedDate(memoAdapter.getMemos(), date);
+        recyclerView.setAdapter(dayAdapter);
     }
 
     /*
@@ -361,4 +374,20 @@ public class MainActivity extends AppCompatActivity
         }
     }
      */
+
+    private ArrayList<String> findDay(){
+        ArrayList<MemoData> cloneMemo = new ArrayList<>();
+        ArrayList<String> findDayString = new ArrayList<>();
+
+        cloneMemo.addAll(memoAdapter.getMemos());
+        for(int i=0;i<cloneMemo.size();i++){
+            String currentDay=cloneMemo.get(i).getTextCurrentDay();
+            String day=currentDay.split(" ")[0];
+            if(!findDayString.contains(day)){
+                findDayString.add(day);
+            }
+        }
+
+        return findDayString;
+    }
 }

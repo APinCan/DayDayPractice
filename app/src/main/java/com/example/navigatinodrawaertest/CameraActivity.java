@@ -10,6 +10,7 @@ import android.graphics.Matrix;
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -352,19 +353,25 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         mRoiWidth = (int) (img_input.size().width * m_dWscale);
         mRoiHeight = (int) (img_input.size().height * m_dHscale);
 
+        Log.d("onCameraFrame", "mRoiWidth : "+mRoiWidth+" mRoiHeight : "+mRoiHeight);
 
         // 사이즈로 중심에 맞는 X , Y 좌표값 계산
         mRoiX = (int) (img_input.size().width - mRoiWidth) / 2;
         mRoiY = (int) (img_input.size().height - mRoiHeight) / 2;
 
+        Log.d("onCameraFrame", "mRoiX : "+mRoiX);
+        Log.d("onCameraFrame", "mRoiY : "+mRoiY);
+
         // ROI 영역 생성
         mRectRoi = new Rect(mRoiX, mRoiY, mRoiWidth, mRoiHeight);
 
+        //roi 영역의 X, Y좌표 그리고 가로, 세로 사이즈
+        // mRoiX, mRoiY, mRoiWidth, mRoiHeight
 
         // ROI 영역 흑백으로 전환
         m_matRoi = img_input.submat(mRectRoi);
-        Imgproc.cvtColor(m_matRoi, m_matRoi, Imgproc.COLOR_RGBA2GRAY);
-        Imgproc.cvtColor(m_matRoi, m_matRoi, Imgproc.COLOR_GRAY2RGBA);
+
+        m_matRoi = DataConverter.preProcessing(m_matRoi);
         m_matRoi.copyTo(img_input.submat(mRectRoi));
         return img_input;
     }

@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.example.navigatinodrawaertest.dummy.DummyContent;
 import com.example.navigatinodrawaertest.dummy.DummyContent.DummyItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,6 +30,7 @@ public class DirectoryFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 2;
     private OnListFragmentInteractionListener mListener;
+    private ArrayList<String> stringMemoList = new ArrayList<>();
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -52,7 +54,11 @@ public class DirectoryFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+//            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            mColumnCount=3;
+
+            stringMemoList= findMemodate(getArguments().getStringArrayList("DAY_ARRAY"));
+//            stringMemoList=getArguments().getStringArrayList("DAY_ARRAY");
         }
     }
 
@@ -70,7 +76,7 @@ public class DirectoryFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new MyItemRecyclerViewAdapter(stringMemoList, mListener));
         }
         return view;
     }
@@ -105,7 +111,18 @@ public class DirectoryFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(String date);
     }
 
+    private ArrayList<String> findMemodate(ArrayList<String> tmpList){
+        ArrayList<String> returnList = new ArrayList<>();
+
+        for(int i=0;i<tmpList.size();i++){
+            if(!returnList.contains(tmpList.get(i))){
+                returnList.add(tmpList.get(i));
+            }
+        }
+
+        return returnList;
+    }
 }

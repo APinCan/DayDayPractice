@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.example.navigatinodrawaertest.Database.DatabaseHelper;
 import com.example.navigatinodrawaertest.Datas.MemoData;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /*
@@ -31,6 +32,8 @@ removeItem이 첫번째 메모가 지워지지 않는 문제
 public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
     //어댑터에 들어갈 list
     private ArrayList<MemoData> memos = new ArrayList<>();
+    private ArrayList<MemoData> currentDateMemos = new ArrayList<>();
+
     private Context mContext;
     private TextView textTitle;
     private TextView textMain;
@@ -38,6 +41,9 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
     private TextView textCurrentDay;
     private ImageView memoImageView;
     final int MEMO_EDIT = 100;
+
+    private String selectedDate;
+    int flag=0;
 
     DatabaseHelper databaseHelper;
     SQLiteDatabase db;
@@ -155,8 +161,11 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
 
        final int realPosition=holder.getAdapterPosition();
+       MemoData item;
 
-        MemoData item= memos.get(realPosition);
+
+       item = memos.get(realPosition);
+
 
         memoImageView.setImageResource(0);
         memoImageView.setVisibility(View.GONE);
@@ -181,12 +190,12 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
             Log.d("onBindViewHolder Title : ", i+"번째 "+memos.get(i).getTitle()+"");
         }
 
-        //https://www.google.com/search?newwindow=1&ei=FqrWXLOeHe6zmAWTx4DgBg&q=%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C+%EA%B3%B5%EC%9C%A0+%EC%9A%94%EC%86%8C+%EC%A0%84%ED%99%98&oq=%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C+%EA%B3%B5%EC%9C%A0+%EC%9A%94%EC%86%8C+%EC%A0%84%ED%99%98&gs_l=psy-ab.3...104679.109631..109823...6.0..2.164.2148.0j19....2..0....1..gws-wiz.......35i39j0j33i21j33i160.SxUywIRe6ik
-        //https://www.youtube.com/watch?v=sv6raw76BRI
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(mContext, "click"+holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
+            //https://www.google.com/search?newwindow=1&ei=FqrWXLOeHe6zmAWTx4DgBg&q=%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C+%EA%B3%B5%EC%9C%A0+%EC%9A%94%EC%86%8C+%EC%A0%84%ED%99%98&oq=%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C+%EA%B3%B5%EC%9C%A0+%EC%9A%94%EC%86%8C+%EC%A0%84%ED%99%98&gs_l=psy-ab.3...104679.109631..109823...6.0..2.164.2148.0j19....2..0....1..gws-wiz.......35i39j0j33i21j33i160.SxUywIRe6ik
+            //https://www.youtube.com/watch?v=sv6raw76BRI
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(mContext, "click" + holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
 //                Intent intent=new Intent(mContext, MemoActivity.class);
 //                intent.putExtra("memoTitle",  memos.get(holder.getAdapterPosition()).getTitle());
 //                intent.putExtra("memoMain", memos.get(holder.getAdapterPosition()).getMain());
@@ -209,14 +218,14 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
 //                //mContext.startActivity(intent, options.toBundle());
 ////                ((Activity) mContext).startActivityForResult(intent, MEMO_EDIT, options.toBundle());
 //                ((Activity) mContext).startActivityForResult(intent, MEMO_EDIT);
-                    Intent intent=new Intent(mContext, MemoActivity.class);
-                    intent.putExtra("memoTitle",  memos.get(realPosition).getTitle());
+                    Intent intent = new Intent(mContext, MemoActivity.class);
+                    intent.putExtra("memoTitle", memos.get(realPosition).getTitle());
                     intent.putExtra("memoMain", memos.get(realPosition).getMain());
                     intent.putExtra("memoAddress", memos.get(realPosition).getAddress());
                     intent.putExtra("memoCurrentDay", memos.get(realPosition).getTextCurrentDay());
                     intent.putExtra("memoPosition", realPosition);
                     Log.d("OnClick", memos.get(realPosition).getTitle());
-                    Log.d("OnCLick", "positon:"+realPosition+"");
+                    Log.d("OnCLick", "positon:" + realPosition + "");
 
                     intent.putExtra("memoImage", memos.get(realPosition).getMemoBitmap());
 
@@ -233,25 +242,24 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
                     //mContext.startActivity(intent, options.toBundle());
 //                ((Activity) mContext).startActivityForResult(intent, MEMO_EDIT, options.toBundle());
                     ((Activity) mContext).startActivityForResult(intent, MEMO_EDIT);
-            }
-        });
+                }
+            });
 
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Toast.makeText(mContext, "LongClick : "+realPosition, Toast.LENGTH_SHORT).show();
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Toast.makeText(mContext, "LongClick : " + realPosition, Toast.LENGTH_SHORT).show();
 
-                removeItem(realPosition);
+                    removeItem(realPosition);
 
-                Log.d("setOnLongClickListneer", holder.getAdapterPosition()+"");
+                    Log.d("setOnLongClickListneer", holder.getAdapterPosition() + "");
 
-                notifyDataSetChanged();
-                //이메서드에서 이벤트에대한 처리가 끝나서 다른데서 처리할 필요 없으면 true
-                //여기서 이벤트 처리를 끝내지 못했을 경우 false
-                return true;
-            }
-        });
-
+                    notifyDataSetChanged();
+                    //이메서드에서 이벤트에대한 처리가 끝나서 다른데서 처리할 필요 없으면 true
+                    //여기서 이벤트 처리를 끝내지 못했을 경우 false
+                    return true;
+                }
+            });
         holder.setIsRecyclable(true);
     }
 

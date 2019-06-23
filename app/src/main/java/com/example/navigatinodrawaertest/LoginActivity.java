@@ -3,16 +3,28 @@ package com.example.navigatinodrawaertest;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.navigatinodrawaertest.Datas.User;
+import com.example.navigatinodrawaertest.Servercon.APIClient;
+import com.example.navigatinodrawaertest.Servercon.NetworkService;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText editTextID;
     private EditText editTextPW;
     private Button btnSubmit;
     private Button btnTest; //테스트를 위한 버튼
+    private NetworkService networkService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +32,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         initViewByID();
+        networkService = APIClient.getClient().create(NetworkService.class);
 
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -33,9 +46,11 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-
+                startActivity(intent);
             }
         });
+
+
     }
 
     //View의 컴포넌트 초기화화
@@ -72,4 +87,33 @@ public class LoginActivity extends AppCompatActivity {
         checkAccount();
     }
 
+    public void getUser() {
+        Call<List<User>> userCall = networkService.get_user();
+        userCall.enqueue(new Callback<List<User>>(){
+            @Override
+            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                if(response.isSuccessful()){
+                    List<User> userList = response.body();
+
+                    String userText="";
+                    for(User user : userList){
+                        userText+= user.id.toString()+
+                                user.email+
+                                user.password+
+                                "\n";
+                    }
+                    Toast.makeText(getApplicationContext(), userText, Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    int statusCode=response.code();
+                    Log.i("MainActivity.getUser", "statuscode : "+statusCode);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<User>> call, Throwable t) {
+                call.cancel();
+            }
+        });
+    }
 }
