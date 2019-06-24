@@ -195,6 +195,8 @@ public class MainActivity extends AppCompatActivity
             }
 
             recyclerView.setAdapter(memoAdapter);
+
+
 //            memoAdapter.notifyDataSetChanged();
             action_create.setVisible(true);
         }
@@ -209,8 +211,10 @@ public class MainActivity extends AppCompatActivity
             fragment.setArguments(args);
             title="Directory";
 
-            recyclerView.setAdapter(dayAdapter);
+//            recyclerView.setAdapter(dayAdapter);
 //            dayAdapter.notifyDataSetChanged();
+            recyclerView.setAdapter(dayAdapter);
+
             action_create.setVisible(false);
         }
         else if (id == R.id.nav_Timeline) {
@@ -325,7 +329,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onListFragmentInteraction(String date) {
-        recyclerView.setAdapter(null);
+        dayAdapter.clearData();
+        dayAdapter.notifyDataSetChanged();
+
+//        recyclerView.setAdapter(null);
 
         if(getSupportActionBar()!=null){
             getSupportActionBar().setTitle(date);
@@ -336,7 +343,9 @@ public class MainActivity extends AppCompatActivity
         fragmentManager.popBackStack();
 
         dayAdapter.setSelectedDate(memoAdapter.getMemos(), date);
-        recyclerView.setAdapter(dayAdapter);
+        dayAdapter.notifyDataSetChanged();
+
+//        recyclerView.setAdapter(dayAdapter);
     }
 
     /*

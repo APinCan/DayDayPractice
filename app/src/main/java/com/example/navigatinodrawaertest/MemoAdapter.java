@@ -253,8 +253,10 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
                     removeItem(realPosition);
 
                     Log.d("setOnLongClickListneer", holder.getAdapterPosition() + "");
-
-                    notifyDataSetChanged();
+//
+//                    notifyDataSetChanged();
+                    notifyItemRemoved(realPosition);
+                    notifyItemRangeChanged(realPosition, memos.size());
                     //이메서드에서 이벤트에대한 처리가 끝나서 다른데서 처리할 필요 없으면 true
                     //여기서 이벤트 처리를 끝내지 못했을 경우 false
                     return true;

@@ -93,7 +93,6 @@ public class SelectedDayAdapter extends RecyclerView.Adapter<SelectedDayAdapter.
     public void setSelectedDate(ArrayList<MemoData> originMemo,String selectedDate){
         this.selectedDate=selectedDate;
         clearData();
-        notifyItemRangeRemoved(0, currentDateMemo.size()-1);
 
         for(int i=0;i<originMemo.size();i++){
             String day = originMemo.get(i).getTextCurrentDay().split(" ")[0];
