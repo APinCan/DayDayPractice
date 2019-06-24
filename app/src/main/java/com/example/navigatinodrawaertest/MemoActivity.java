@@ -9,6 +9,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +28,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.navigatinodrawaertest.Datas.MemoData;
+
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -307,7 +311,17 @@ public class MemoActivity extends AppCompatActivity {
     public void textRecognition(){
 //        TesseractOCR tesseractOCR = new TesseractOCR(this, "eng");
 //        tesseractOCR = new TesseractOCR(this, "eng");
-        String text=tesseractOCR.getOCRResult(inputImage);
+
+        Mat mat = new Mat();
+        Bitmap bitmap = inputImage.copy(Bitmap.Config.ARGB_8888, true);
+        Utils.bitmapToMat(bitmap, mat);
+
+        mat = DataConverter.preProcessing(mat);
+
+        Bitmap resultBitmap = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);
+
+//        String text=tesseractOCR.getOCRResult(inputImage);
+        String text = tesseractOCR.getOCRResult(resultBitmap);
 
         inputImage=null;
 
@@ -420,5 +434,18 @@ public class MemoActivity extends AppCompatActivity {
 
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
                 || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
+
+    private class AsyncTess extends AsyncTask<Bitmap, Integer, String>{
+
+        @Override
+        protected String doInBackground(Bitmap... bitmaps) {
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+        }
     }
 }
