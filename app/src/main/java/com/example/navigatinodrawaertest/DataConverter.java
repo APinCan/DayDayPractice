@@ -63,10 +63,11 @@ public class DataConverter {
         //이미지 전처리
         Mat element1 = getStructuringElement(MORPH_RECT, new Size(2, 2), new Point(1, 1));
         Mat element2 = getStructuringElement(MORPH_RECT, new Size(2, 2), new Point(1, 1));
-        dilate(transMat, transMat, element1);
         erode(transMat, transMat, element2);
+        dilate(transMat, transMat, element1);
 
-        GaussianBlur(transMat, transMat, new Size(3, 3), 0);
+
+//        GaussianBlur(transMat, transMat, new Size(3, 3), 0);
         // The thresold value will be used here
         threshold(transMat, transMat, 100, 255, THRESH_BINARY);
 

@@ -21,7 +21,7 @@
         android:id="@+id/surface_roi"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="#00ff0000" />
+        android:background="#00FF0000" />
 
     <!--Start 및 뒤로가기 버튼-->
     <Button
@@ -31,7 +31,6 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="10dp"
         android:onClick="onClickButton"
         android:background="#7d010000"
         android:text="Start"
@@ -53,16 +52,6 @@
         android:textSize="20dp"
         />
 
-    <!-- OCR 결과 및 캡쳐이미지 출력-->
-    <!--<TextView-->
-        <!--android:id="@+id/text_ocrresult"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="50dp"-->
-        <!--android:layout_marginTop="15dp"-->
-        <!--android:layout_marginLeft="15dp"-->
-        <!--android:text=""-->
-        <!--android:textColor="@android:color/holo_red_dark"-->
-        <!--android:textSize="20dp" />-->
 
     <ImageView
         android:id="@+id/image_capture"

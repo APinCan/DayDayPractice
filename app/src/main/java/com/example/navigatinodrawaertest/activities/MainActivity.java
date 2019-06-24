@@ -182,6 +182,8 @@ public class MainActivity extends AppCompatActivity
         String title=getString(R.string.app_name);
 
         if(id==R.id.nav_home){
+            recyclerView.setAdapter(memoAdapter);
+
             ArrayList<MemoData> tmpData = new ArrayList<>();
             tmpData.addAll(memoAdapter.getMemos());
 
@@ -194,9 +196,11 @@ public class MainActivity extends AppCompatActivity
                 fragmentManager.popBackStack();
             }
 
+
+
             memoAdapter.setMemos(tmpData);
             memoAdapter.notifyDataSetChanged();
-            recyclerView.setAdapter(memoAdapter);
+
 
             action_create.setVisible(true);
         }

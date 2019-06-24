@@ -60,6 +60,8 @@ public class SelectedDayAdapter extends RecyclerView.Adapter<SelectedDayAdapter.
             memoImageView.setVisibility(View.VISIBLE);
         }
 
+//        viewHolder.setIsRecyclable(false);
+
         memoImageView.invalidate();
     }
 
@@ -93,7 +95,7 @@ public class SelectedDayAdapter extends RecyclerView.Adapter<SelectedDayAdapter.
 
     public void setSelectedDate(ArrayList<MemoData> originMemo,String selectedDate){
         this.selectedDate=selectedDate;
-        clearData();
+//        clearData();
 
         for(int i=0;i<originMemo.size();i++){
             String day = originMemo.get(i).getTextCurrentDay().split(" ")[0];

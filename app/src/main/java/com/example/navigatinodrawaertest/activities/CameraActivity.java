@@ -248,12 +248,12 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
                 m_dWscale = (double) 1 / 2;
                 m_dHscale = (double) 1 / 2;
 
-
-                //결과 TextView 위치 조정
-                mRelativeParams = new android.widget.RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                mRelativeParams.setMargins(0, convertDpToPixel(20), 0, 0);
-                mRelativeParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-//                mTextOcrResult.setLayoutParams(mRelativeParams);
+//
+//                //결과 TextView 위치 조정
+//                mRelativeParams = new android.widget.RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//                mRelativeParams.setMargins(0, convertDpToPixel(20), 0, 0);
+//                mRelativeParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+////                mTextOcrResult.setLayoutParams(mRelativeParams);
 
                 break;
 
@@ -261,13 +261,16 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
             case 90:
             case 270:
 
-                m_dWscale = (double) 1 / 4;    //h (반대)
-                m_dHscale = (double) 3 / 4;    //w
+//                m_dWscale = (double) 1 / 4;    //h (반대)
+//                m_dHscale = (double) 3 / 4;    //w
+                m_dWscale = (double) 1 / 2;    //h (반대)
+                m_dHscale = (double) 1 / 2;    //w
 
-                mRelativeParams = new android.widget.RelativeLayout.LayoutParams(convertDpToPixel(300), ViewGroup.LayoutParams.WRAP_CONTENT);
-                mRelativeParams.setMargins(convertDpToPixel(15), 0, 0, 0);
-                mRelativeParams.addRule(RelativeLayout.CENTER_VERTICAL);
-//                mTextOcrResult.setLayoutParams(mRelativeParams);
+//
+//                mRelativeParams = new android.widget.RelativeLayout.LayoutParams(convertDpToPixel(300), ViewGroup.LayoutParams.WRAP_CONTENT);
+//                mRelativeParams.setMargins(convertDpToPixel(15), 0, 0, 0);
+//                mRelativeParams.addRule(RelativeLayout.CENTER_VERTICAL);
+////                mTextOcrResult.setLayoutParams(mRelativeParams);
 
 
                 break;
@@ -383,7 +386,6 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
             TesseractOCR tesseractOCR = new TesseractOCR(getApplicationContext(), "eng");
             String text=tesseractOCR.getOCRResult(bmp_result);
 
-//            mTextOcrResult.setText(text);
             Log.d("AyncTest ", text);
             return text;
         }
@@ -398,8 +400,6 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
             mStartFlag = true;
 
             m_strOcrResult = result;
-//            mTextOcrResult.setText(m_strOcrResult);
-
         }
     }
 

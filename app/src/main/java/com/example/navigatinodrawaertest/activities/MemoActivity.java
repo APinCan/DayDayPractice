@@ -33,8 +33,12 @@ import com.example.navigatinodrawaertest.R;
 import com.example.navigatinodrawaertest.utils.GpsTracker;
 import com.example.navigatinodrawaertest.utils.TesseractOCR;
 
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -69,6 +73,7 @@ public class MemoActivity extends AppCompatActivity {
     private GpsTracker gpsTracker;
 
     static TesseractOCR tesseractOCR;
+    AsyncTess asyncTess = new AsyncTess();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -316,21 +321,41 @@ public class MemoActivity extends AppCompatActivity {
 //        TesseractOCR tesseractOCR = new TesseractOCR(this, "eng");
 //        tesseractOCR = new TesseractOCR(this, "eng");
 
-        Mat mat = new Mat();
+        Mat transMat = new Mat();
         Bitmap bitmap = inputImage.copy(Bitmap.Config.ARGB_8888, true);
-        Utils.bitmapToMat(bitmap, mat);
+        Utils.bitmapToMat(bitmap, transMat);
 
-        mat = DataConverter.preProcessing(mat);
+        transMat = DataConverter.preProcessing(transMat);
 
-        Bitmap resultBitmap = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);
+        Bitmap resultBitmap = Bitmap.createBitmap(transMat.cols(), transMat.rows(), Bitmap.Config.ARGB_8888);
+
+        Utils.matToBitmap(transMat, resultBitmap);
 
 //        String text=tesseractOCR.getOCRResult(inputImage);
-        String text = tesseractOCR.getOCRResult(resultBitmap);
+        String text = tesseractOCR.getOCRResult(inputImage);
 
+        resultBitmap=null;
         inputImage=null;
 
         editTextMain.setText(text);
     }
+
+//    public String textRecognition(){
+//        Mat transMat = new Mat();
+//        Bitmap bitmap = inputImage.copy(Bitmap.Config.ARGB_8888, true);
+//        Utils.bitmapToMat(bitmap, transMat);
+//
+//        transMat = DataConverter.preProcessing(transMat);
+//
+//        Bitmap resultBitmap = Bitmap.createBitmap(transMat.cols(), transMat.rows(), Bitmap.Config.ARGB_8888);
+//
+////        String text=tesseractOCR.getOCRResult(inputImage);
+//        String text = tesseractOCR.getOCRResult(resultBitmap);
+//
+//        inputImage=null;
+//
+//        return text;
+//    }
 
     public void setPictureinMain(Bitmap bitmap){
         int cursor=editTextMain.getSelectionStart();
@@ -370,9 +395,23 @@ public class MemoActivity extends AppCompatActivity {
     }
 
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (!OpenCVLoader.initDebug()) {
+            Log.d("onResumeMemoactivity", "onResume :: Internal OpenCV library not found.");
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_2_0, this, mLoaderCallback);
+        } else {
+            Log.d("onResumeMemoActivity", "onResume :: OpenCV library found inside package. Using it!");
+            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+        }
+    }
+
     /*
-    주소관련 코드
-     */
+        주소관련 코드
+         */
     public String getCurrentAddress( double latitude, double longitude) {
         //지오코더... GPS를 주소로 변환
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
@@ -440,16 +479,46 @@ public class MemoActivity extends AppCompatActivity {
                 || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
-    private class AsyncTess extends AsyncTask<Bitmap, Integer, String>{
+    private class AsyncTess extends AsyncTask<Void, Void, String>{
 
         @Override
-        protected String doInBackground(Bitmap... bitmaps) {
-            return null;
+        protected String doInBackground(Void... voids) {
+            Mat transMat = new Mat();
+            Bitmap bitmap = inputImage.copy(Bitmap.Config.ARGB_8888, true);
+            Utils.bitmapToMat(bitmap, transMat);
+
+            transMat = DataConverter.preProcessing(transMat);
+
+            Bitmap resultBitmap = Bitmap.createBitmap(transMat.cols(), transMat.rows(), Bitmap.Config.ARGB_8888);
+
+//        String text=tesseractOCR.getOCRResult(inputImage);
+            String text = tesseractOCR.getOCRResult(resultBitmap);
+
+            inputImage=null;
+
+            return text;
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+        protected void onPostExecute(String result) {
+            editTextMain.setText(result);
+
         }
     }
+
+    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+        @Override
+        public void onManagerConnected(int status) {
+            switch (status) {
+                case LoaderCallbackInterface.SUCCESS: {
+
+                }
+                break;
+                default: {
+                    super.onManagerConnected(status);
+                }
+                break;
+            }
+        }
+    };
 }
