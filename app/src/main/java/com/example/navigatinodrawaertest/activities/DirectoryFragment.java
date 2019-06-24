@@ -1,8 +1,12 @@
 package com.example.navigatinodrawaertest.activities;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,7 +24,7 @@ import java.util.ArrayList;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class DirectoryFragment extends Fragment {
+public class DirectoryFragment extends DialogFragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -28,6 +32,8 @@ public class DirectoryFragment extends Fragment {
     private int mColumnCount = 2;
     private OnListFragmentInteractionListener mListener;
     private ArrayList<String> stringMemoList = new ArrayList<>();
+
+    private int margin=10;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -45,6 +51,10 @@ public class DirectoryFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
+//    bundleFunction(Bundle savedInstanceState){
+//        super.onActivityCreated(savedInstanceState);
+//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,6 +86,37 @@ public class DirectoryFragment extends Fragment {
             recyclerView.setAdapter(new MyItemRecyclerViewAdapter(stringMemoList, mListener));
         }
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        int dialogHeight = MainActivity.displayMetrics.heightPixels - (margin * 2) - MainActivity.StatusBarHeight;
+        int dialogWidth = MainActivity.displayMetrics.widthPixels - (margin * 2);
+//        getDialog().getWindow().setLayout(dialogWidth, dialogHeight);
+        super.onResume();
+    }
+
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (getDialog() == null) {
+            Context context = getContext();
+            while (context instanceof ContextWrapper) {
+                if (context instanceof FragmentActivity) {
+                    break;
+                }
+                context = ((ContextWrapper) context).getBaseContext();
+            }
+            if (context instanceof FragmentActivity) {
+                ((FragmentActivity) context).finish();
+                return;
+            } else {
+                setShowsDialog(false);
+            }
+        }
+
     }
 
 

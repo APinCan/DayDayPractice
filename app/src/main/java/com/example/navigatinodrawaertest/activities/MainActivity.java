@@ -18,6 +18,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.View;
@@ -51,6 +52,9 @@ public class MainActivity extends AppCompatActivity
     private SelectedDayAdapter dayAdapter;
     Fragment fragment=null;
     RecyclerView recyclerView;
+
+    public static DisplayMetrics displayMetrics;
+    public static int StatusBarHeight;
 
     MenuItem action_create;
 
@@ -86,6 +90,10 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         checkPermission();
+
+        displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        StatusBarHeight = getStatusBarHeight();
 
 //        networkService = APIClient.getClient().create(NetworkService.class);
         setContentView(R.layout.activity_main);
@@ -381,5 +389,14 @@ public class MainActivity extends AppCompatActivity
         }
 
         return findDayString;
+    }
+
+    public int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 }
