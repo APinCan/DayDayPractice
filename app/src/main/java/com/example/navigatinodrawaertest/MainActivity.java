@@ -185,14 +185,12 @@ public class MainActivity extends AppCompatActivity
         String title=getString(R.string.app_name);
 
         if(id==R.id.nav_home){
-            if(fragment==null){
 
-            }
-            else {
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 fragmentManager.beginTransaction().remove(fragment).commit();
                 fragmentManager.popBackStack();
-            }
+//                fragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE    );
+
 
             recyclerView.setAdapter(memoAdapter);
 
@@ -201,6 +199,7 @@ public class MainActivity extends AppCompatActivity
             action_create.setVisible(true);
         }
         else if (id == R.id.nav_Directory_List) {
+
 //            getUser();
             Bundle args = new Bundle();
             ArrayList<String> tmpArray= new ArrayList<>();
@@ -216,6 +215,12 @@ public class MainActivity extends AppCompatActivity
             recyclerView.setAdapter(dayAdapter);
 
             action_create.setVisible(false);
+
+            if(fragment!=null){
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.drawer_container, fragment);
+                ft.commit();
+            }
         }
         else if (id == R.id.nav_Timeline) {
 
@@ -226,11 +231,6 @@ public class MainActivity extends AppCompatActivity
 
         }
 
-        if(fragment!=null){
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.drawer_container, fragment);
-            ft.commit();
-        }
 
         //툴바에 타이틀 적용
         if(getSupportActionBar()!=null){
