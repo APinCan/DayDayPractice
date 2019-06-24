@@ -9,7 +9,7 @@
     android:elevation="10dp"
     android:orientation="vertical"
     android:paddingTop="10dp"
-    tools:context=".MemoActivity">
+    tools:context=".activities.MemoActivity">
 
     <EditText
         android:id="@+id/editTextTitle"

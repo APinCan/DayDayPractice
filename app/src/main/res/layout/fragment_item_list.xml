@@ -10,6 +10,6 @@
     android:layout_marginRight="16dp"
     android:background="#FFFFFF"
     app:layoutManager="android.support.v7.widget.GridLayoutManager"
-    tools:context=".DirectoryFragment"
+    tools:context=".activities.DirectoryFragment"
     app:spanCount="3"
     tools:listitem="@layout/fragment_item" />

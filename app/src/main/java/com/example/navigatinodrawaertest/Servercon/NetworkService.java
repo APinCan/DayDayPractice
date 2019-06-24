@@ -12,6 +12,7 @@ import android.support.v7.widget.CardView;
 
 //https://jongmin92.github.io/2018/01/29/Programming/android-retrofit2-okhttp3/
 
+import com.example.navigatinodrawaertest.Datas.MemoData;
 import com.example.navigatinodrawaertest.Datas.User;
 
 import java.util.List;
@@ -29,21 +30,6 @@ import retrofit2.http.Path;
 
 //예제
 public interface NetworkService {
-//    @POST("/api/versions/")
-//    Call<Version> post_version(@Body Version version);
-//
-//    @PATCH("/api/versions/{pk}/")
-//    Call<Version> path_version(@Path("pk") int pk, @Body Version version);
-//
-//    @DELETE("/pai/versions/{pk}/")
-//    Call<Version> delete_verison(@Path("pk") int pk);
-//
-//    @GET("/api/versions/")
-//    Call<List<Version>> get_version();
-//
-//    @GET("/api/versions/{pk}/")
-//    Call<Version> get_pk_version(@Path("pk") int pk);
-
     /*
     받아올것
      */
@@ -62,16 +48,9 @@ public interface NetworkService {
     여기까지
      */
 
-//    @GET("api/unknown")
-//    Call<MultipleResource> doGetListResources();
-//
-//    @POST("api/users")
-//    Call<User> createUser(@Body User user);
-//
-//    @GET("api/users?")
-//    Call<UserList> doGetUserList(@Query("page") String page);
-//
-//    @FormUrlEncoded
-//    @POST("api/users?")
-//    Call<UserList> doCreateUserWithField(@Field("name") String name, @Field("job") String job);
+    @POST
+    Call<MemoData> post_memodata(@Body MemoData memos);
+
+    @POST
+    Call<String> post_memoString(@Body String memo);
 }

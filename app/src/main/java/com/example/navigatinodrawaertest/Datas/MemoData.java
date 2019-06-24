@@ -9,7 +9,6 @@ public class MemoData {
     private String textMain;
     private String textAddress;
     private String textCurrentDay;
-//    private Bitmap memoBitmap;
     private byte[] memoBitmap;
 
     public MemoData(){}

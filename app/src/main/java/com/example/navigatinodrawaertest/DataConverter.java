@@ -23,9 +23,6 @@ public class DataConverter {
 
     // convert from bitmap to byte array
     public static byte[] getBytes(Bitmap bitmap) {
-        //java.lang.NullPointerException: Attempt to invoke virtual method 'boolean android.graphics.Bitmap.compress(android.graphics.Bitmap$CompressFormat, int, java.io.OutputStream)' on a null object reference
-        //        at com.example.navigatinodrawaertest.DataConverter.getBytes(DataConverter.java:14)
-        //excepton이 나는  상황 >> 메모 만들고 > backpress로 저장하고 만들어진걸로 다시 들어가고(이때 이미지 증발)  > 다시 저장하려고 backpress할때
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 0, stream);
         return stream.toByteArray();

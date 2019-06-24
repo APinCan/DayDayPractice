@@ -5,12 +5,12 @@
     android:layout_height="wrap_content"
 
     android:orientation="vertical"
-    tools:context=".LoginActivity">
+    tools:context=".activities.LoginActivity">
 
     <TextView
         android:id="@+id/textView5"
         android:layout_width="match_parent"
-        android:layout_height="239dp" />
+        android:layout_height="300dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -69,18 +69,10 @@
             android:id="@+id/btnSubmit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
+            android:layout_marginLeft="100dp"
+            android:layout_marginRight="100dp"
             android:layout_weight="1"
             android:text="SUBMIT" />
-
-        <Button
-            android:id="@+id/btnTEST"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginRight="45dp"
-            android:layout_weight="1"
-            android:text="TEST" />
 
     </LinearLayout>
 

@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.example.navigatinodrawaertest.MemoAdapter;
+import com.example.navigatinodrawaertest.activities.MemoAdapter;
 import com.example.navigatinodrawaertest.Datas.MemoData;
 
 //database를 사용하기 위한 클래스

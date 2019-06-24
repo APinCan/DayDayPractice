@@ -11,18 +11,17 @@
         </menu>
     </item>
 
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_Directory_List"
-            android:icon="@drawable/ic_folder_black_18dp"
-            android:title="Directory"/>
-        <item
-            android:id="@+id/nav_Timeline"
-            android:icon="@drawable/ic_access_time_black_18dp"
-            android:title="Timeline"/>
+    <item android:title="DirectoryList">
+            <item
+                android:id="@+id/nav_Directory_List"
+                android:icon="@drawable/ic_folder_black_18dp"
+                android:title="Directory"/>
+            <!--<item-->
+                <!--android:id="@+id/nav_Timeline"-->
+                <!--android:icon="@drawable/ic_access_time_black_18dp"-->
+                <!--android:title="Timeline"/>-->
+    </item>
 
-
-    </group>
 
     <!--<group android:checkableBehavior="single">-->
         <!--<item-->
@@ -43,17 +42,17 @@
             <!--android:title="@string/menu_tools" />-->
     <!--</group>-->
 
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="@string/menu_share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="@string/menu_send" />
-        </menu>
-    </item>
+    <!--<item android:title="Communicate">-->
+        <!--<menu>-->
+            <!--<item-->
+                <!--android:id="@+id/nav_share"-->
+                <!--android:icon="@drawable/ic_menu_share"-->
+                <!--android:title="@string/menu_share" />-->
+            <!--<item-->
+                <!--android:id="@+id/nav_send"-->
+                <!--android:icon="@drawable/ic_menu_send"-->
+                <!--android:title="@string/menu_send" />-->
+        <!--</menu>-->
+    <!--</item>-->
 
 </menu>
