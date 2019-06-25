@@ -1,6 +1,7 @@
 package com.example.navigatinodrawaertest.activities;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -13,6 +14,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -52,6 +54,7 @@ public class MainActivity extends AppCompatActivity
     private SelectedDayAdapter dayAdapter;
     Fragment fragment=null;
     RecyclerView recyclerView;
+    DialogFragment dialFragment=null;
 
     public static DisplayMetrics displayMetrics;
     public static int StatusBarHeight;
@@ -198,13 +201,14 @@ public class MainActivity extends AppCompatActivity
             memoAdapter.clearMemos();
             memoAdapter.notifyDataSetChanged();
 
-            if(fragment!=null) {
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().remove(fragment).commit();
-                fragmentManager.popBackStack();
+//            if(fragment!=null) {
+//                FragmentManager fragmentManager = getSupportFragmentManager();
+//                fragmentManager.beginTransaction().remove(fragment).commit();
+//                fragmentManager.popBackStack();
+//            }
+            if(dialFragment!=null){
+                dialFragment.dismiss();
             }
-
-
 
             memoAdapter.setMemos(tmpData);
             memoAdapter.notifyDataSetChanged();
@@ -219,18 +223,24 @@ public class MainActivity extends AppCompatActivity
 
             args.putStringArrayList("DAY_ARRAY", findDay());
 
-            fragment=new DirectoryFragment();
-            fragment.setArguments(args);
+            //프래그먼트로 띄우기
+//            fragment=new DirectoryFragment();
+//            fragment.setArguments(args);
+            dialFragment =DirectoryFragment.newInstance(3);
+            dialFragment.setArguments(args);
             title="Directory";
 
             recyclerView.setAdapter(dayAdapter);
 
             action_create.setVisible(false);
 
-            if(fragment!=null){
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.drawer_container, fragment);
-                ft.commit();
+//            if(fragment!=null){
+//                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//                ft.replace(R.id.drawer_container, fragment);
+//                ft.commit();
+//            }
+            if(dialFragment!=null){
+                dialFragment.show(getSupportFragmentManager(), "tag");
             }
         }
 
@@ -331,9 +341,11 @@ public class MainActivity extends AppCompatActivity
             getSupportActionBar().setTitle(date);
         }
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().remove(fragment).commit();
-        fragmentManager.popBackStack();
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        fragmentManager.beginTransaction().remove(fragment).commit();
+//        fragmentManager.popBackStack();
+
+        dialFragment.dismiss();
 
         dayAdapter.setSelectedDate(memoAdapter.getMemos(), date);
         dayAdapter.notifyDataSetChanged();

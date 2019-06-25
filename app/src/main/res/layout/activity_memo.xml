@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,51 +11,60 @@
     android:paddingTop="10dp"
     tools:context=".activities.MemoActivity">
 
-    <EditText
-        android:id="@+id/editTextTitle"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:background="@android:color/transparent"
-        android:ems="10"
-        android:hint="제목"
-        android:inputType="textPersonName" />
+        android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/imageViewMemoActivity"
-        android:layout_width="match_parent"
-        android:layout_height="350dp"
-        android:layout_below="@id/editTextTitle"
-        android:scaleType="fitCenter"
-        android:visibility="gone" />
 
-    <EditText
-        android:id="@+id/editTextMain"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/imageViewMemoActivity"
-        android:layout_margin="10dp"
-        android:background="@android:color/transparent"
-        android:ems="10"
-        android:hint="내용"
-        android:inputType="textMultiLine"
-        android:scrollbars="vertical"
-        android:text="" />
+        <EditText
+            android:id="@+id/editTextTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@android:color/transparent"
+            android:ems="10"
+            android:hint="제목"
+            android:inputType="textPersonName" />
 
-    <TextView
-        android:id="@+id/textViewAddressActivity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/editTextMain"
-        android:layout_margin="10dp"
-        android:text="주소" />
+        <ImageView
+            android:id="@+id/imageViewMemoActivity"
+            android:layout_width="match_parent"
+            android:layout_height="350dp"
+            android:layout_below="@id/editTextTitle"
+            android:scaleType="fitCenter"
+            android:visibility="gone" />
 
-    <TextView
-        android:id="@+id/textViewCurrentDayActivity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/textViewAddressActivity"
-        android:layout_margin="10dp"
-        android:text="날짜" />
+        <EditText
+            android:id="@+id/editTextMain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/imageViewMemoActivity"
+            android:layout_margin="10dp"
+            android:background="@android:color/transparent"
+            android:ems="10"
+            android:hint="내용"
+            android:inputType="textMultiLine"
+            android:scrollbars="vertical"
+            android:text="" />
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/textViewAddressActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/editTextMain"
+            android:layout_margin="10dp"
+            android:text="주소" />
+
+        <TextView
+            android:id="@+id/textViewCurrentDayActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textViewAddressActivity"
+            android:layout_margin="10dp"
+            android:text="날짜" />
+
+
+    </RelativeLayout>
+
+
+</ScrollView>

@@ -29,5 +29,11 @@
     <style name="MemoActionBarText" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
         <item name="android:textColor">#0000FF</item>
     </style>
+    
+    <style name="FullscreenDialogTheme" parent="Theme.AppCompat.Light.DialogWhenLarge">
+        <item name="android:statusBarColor">#FFEEFF</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowAnimationStyle">@style/Animation.AppCompat.Dialog</item>
+    </style>
 
 </resources>

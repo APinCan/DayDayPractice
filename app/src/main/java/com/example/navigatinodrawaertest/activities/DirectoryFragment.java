@@ -60,6 +60,8 @@ public class DirectoryFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.FullscreenDialogTheme);
+
         if (getArguments() != null) {
 //            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
             mColumnCount=3;
@@ -92,32 +94,32 @@ public class DirectoryFragment extends DialogFragment {
     public void onResume() {
         int dialogHeight = MainActivity.displayMetrics.heightPixels - (margin * 2) - MainActivity.StatusBarHeight;
         int dialogWidth = MainActivity.displayMetrics.widthPixels - (margin * 2);
-//        getDialog().getWindow().setLayout(dialogWidth, dialogHeight);
+        getDialog().getWindow().setLayout(dialogWidth, dialogHeight);
         super.onResume();
     }
 
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        if (getDialog() == null) {
-            Context context = getContext();
-            while (context instanceof ContextWrapper) {
-                if (context instanceof FragmentActivity) {
-                    break;
-                }
-                context = ((ContextWrapper) context).getBaseContext();
-            }
-            if (context instanceof FragmentActivity) {
-                ((FragmentActivity) context).finish();
-                return;
-            } else {
-                setShowsDialog(false);
-            }
-        }
-
-    }
+//    @Override
+//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+//        super.onActivityCreated(savedInstanceState);
+//
+//        if (getDialog() == null) {
+//            Context context = getContext();
+//            while (context instanceof ContextWrapper) {
+//                if (context instanceof FragmentActivity) {
+//                    break;
+//                }
+//                context = ((ContextWrapper) context).getBaseContext();
+//            }
+//            if (context instanceof FragmentActivity) {
+//                ((FragmentActivity) context).finish();
+//                return;
+//            } else {
+//                setShowsDialog(false);
+//            }
+//        }
+//
+//    }
 
 
     @Override
